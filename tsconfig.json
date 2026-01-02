@@ -32,6 +32,6 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
   },
-  "include": ["src/**/*", "db/**/*", "src/modules/**/*"],
-  "exclude": ["node_modules", "dist", "drizzle"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "src/drizzle"]
 }

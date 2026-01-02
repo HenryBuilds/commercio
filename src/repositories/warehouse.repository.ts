@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { db } from "../../db/db";
+import { db } from "../db/db";
 import { warehouses } from "../db/schema/index";
 import { Warehouse, WarehouseId } from "../modules/warehouse/warehouse.model";
 

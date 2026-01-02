@@ -1,5 +1,5 @@
 // Database
-export { db, schema } from "../db/db";
+export { db, schema } from "./db/db";
 
 // Models
 export * from "./modules/product/product.model";

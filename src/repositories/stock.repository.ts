@@ -1,5 +1,5 @@
 import { eq, and } from "drizzle-orm";
-import { db } from "../../db/db";
+import { db } from "../db/db";
 import { stock } from "../db/schema/index";
 import { Stock } from "../modules/inventory/stock.model";
 import { ProductId } from "../modules/product/product.model";

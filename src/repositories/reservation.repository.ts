@@ -1,5 +1,5 @@
 import { eq, and, lt } from "drizzle-orm";
-import { db } from "../../db/db";
+import { db } from "../db/db";
 import { reservations } from "../db/schema/index";
 import {
   Reservation,

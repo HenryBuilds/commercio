@@ -1,5 +1,5 @@
 import { eq, and } from "drizzle-orm";
-import { db } from "../../db/db";
+import { db } from "../db/db";
 import { inventoryTransactions } from "../db/schema/index";
 import {
   InventoryTransaction,
