@@ -16,4 +16,24 @@ export class Product {
       throw new Error("SKU must not be empty");
     }
   }
+
+  /**
+   * Factory method: Creates a Product from DB data
+   * Alternative to Mapper class for simpler cases
+   */
+  static fromDb(data: {
+    id: ProductId;
+    name: string;
+    sku: string;
+    isSellable: boolean;
+    isActive: boolean;
+  }): Product {
+    return new Product(
+      data.id,
+      data.name,
+      data.sku,
+      data.isSellable,
+      data.isActive
+    );
+  }
 }

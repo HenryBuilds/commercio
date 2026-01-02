@@ -23,4 +23,27 @@ export class Reservation {
       throw new Error("Reservation quantity must be positive");
     }
   }
+
+  /**
+   * Factory method: Creates a Reservation from DB data
+   */
+  static fromDb(data: {
+    id: ReservationId;
+    productId: ProductId;
+    warehouseId: WarehouseId;
+    quantity: number;
+    referenceId: string;
+    status: ReservationStatus;
+    expiresAt?: Date;
+  }): Reservation {
+    return new Reservation(
+      data.id,
+      data.productId,
+      data.warehouseId,
+      data.quantity,
+      data.referenceId,
+      data.status,
+      data.expiresAt
+    );
+  }
 }

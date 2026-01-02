@@ -11,4 +11,21 @@ export class Warehouse {
       throw new Error("Warehouse name must not be empty");
     }
   }
+
+  /**
+   * Factory method: Creates a Warehouse from DB data
+   */
+  static fromDb(data: {
+    id: WarehouseId;
+    name: string;
+    shippingEnabled: boolean;
+    isActive: boolean;
+  }): Warehouse {
+    return new Warehouse(
+      data.id,
+      data.name,
+      data.shippingEnabled,
+      data.isActive
+    );
+  }
 }

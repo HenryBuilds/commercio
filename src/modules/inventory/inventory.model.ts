@@ -24,4 +24,27 @@ export class InventoryTransaction {
       throw new Error("Inventory transaction quantity must be positive");
     }
   }
+
+  /**
+   * Factory method: Creates an InventoryTransaction from DB data
+   */
+  static fromDb(data: {
+    id: InventoryTransactionId;
+    productId: ProductId;
+    warehouseId: WarehouseId;
+    quantity: number;
+    type: InventoryTransactionType;
+    referenceId?: string;
+    createdAt: Date;
+  }): InventoryTransaction {
+    return new InventoryTransaction(
+      data.id,
+      data.productId,
+      data.warehouseId,
+      data.quantity,
+      data.type,
+      data.referenceId,
+      data.createdAt
+    );
+  }
 }

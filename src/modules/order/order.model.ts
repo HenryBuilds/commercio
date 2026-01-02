@@ -31,6 +31,23 @@ export class OrderItem {
   get total(): number {
     return this.quantity * this.unitPrice;
   }
+
+  /**
+   * Factory method: Creates an OrderItem from DB data
+   */
+  static fromDb(data: {
+    id: OrderItemId;
+    productId: ProductId;
+    quantity: number;
+    unitPrice: number;
+  }): OrderItem {
+    return new OrderItem(
+      data.id,
+      data.productId,
+      data.quantity,
+      data.unitPrice
+    );
+  }
 }
 
 export class Order {
@@ -48,5 +65,24 @@ export class Order {
 
   get totalAmount(): number {
     return this.items.reduce((sum, item) => sum + item.total, 0);
+  }
+
+  /**
+   * Factory method: Creates an Order from DB data
+   */
+  static fromDb(data: {
+    id: OrderId;
+    customerId: string;
+    items: OrderItem[];
+    status: OrderStatus;
+    createdAt: Date;
+  }): Order {
+    return new Order(
+      data.id,
+      data.customerId,
+      data.items,
+      data.status,
+      data.createdAt
+    );
   }
 }

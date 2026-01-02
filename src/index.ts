@@ -17,5 +17,8 @@ export { InventoryTransactionRepository } from "./repositories/inventory-transac
 export { OrderRepository } from "./repositories/order.repository";
 export { ReservationRepository } from "./repositories/reservation.repository";
 
+// Mappers (for DB ↔ Domain transformations)
+export * from "./db/mappers/index";
+
 // Schema (for migrations)
 export * from "./db/schema/index";
