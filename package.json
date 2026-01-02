@@ -56,6 +56,8 @@
   "dependencies": {
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "pino": "^9.3.0",
+    "pino-pretty": "^11.2.0"
   }
 }

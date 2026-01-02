@@ -1,6 +1,17 @@
 // Database
 export { db, schema } from "./db/db";
 
+// Database initialization (call this before using any repositories or services)
+export {
+  initDatabase,
+  closeDatabase,
+  isDatabaseInitialized,
+  type DatabaseConfig,
+} from "./db/init";
+
+// Logger
+export { logger, createLogger } from "./utils/logger";
+
 // Models
 export * from "./modules/product/product.model";
 export * from "./modules/warehouse/warehouse.model";
