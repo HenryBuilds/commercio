@@ -4,7 +4,8 @@ A modular ERP (Enterprise Resource Planning) system for Node.js with PostgreSQL 
 
 ## Features
 
-- Product management with SKU support
+- Category management for product organization
+- Product management with SKU support (requires category)
 - Warehouse management (multi-warehouse)
 - Inventory management with transaction history
 - Order management with status workflow
@@ -115,10 +116,12 @@ That's it! No need to configure Drizzle Kit or generate migration files manually
 ```typescript
 import {
   initDatabase,
+  CategoryService,
   ProductService,
   WarehouseService,
   StockService,
   OrderService,
+  CategoryRepository,
   ProductRepository,
   WarehouseRepository,
   StockRepository,
@@ -135,6 +138,7 @@ initDatabase({
 });
 
 // Create repositories
+const categoryRepo = new CategoryRepository();
 const productRepo = new ProductRepository();
 const warehouseRepo = new WarehouseRepository();
 const stockRepo = new StockRepository();
@@ -143,6 +147,7 @@ const reservationRepo = new ReservationRepository();
 const transactionRepo = new InventoryTransactionRepository();
 
 // Create services
+const categoryService = new CategoryService(categoryRepo);
 const productService = new ProductService(productRepo);
 const warehouseService = new WarehouseService(warehouseRepo);
 const stockService = new StockService(stockRepo, productRepo, warehouseRepo);
@@ -158,22 +163,64 @@ const orderService = new OrderService(
 );
 ```
 
-### Product Management
+### Category Management
 
 ```typescript
-// Create product
+// Create category
+const category = await categoryService.createCategory(
+  "Electronics",
+  "Electronic devices and accessories"
+);
+
+// Get category
+const foundCategory = await categoryService.getCategoryById(category.id);
+const categoryByName = await categoryService.getCategoryByName("Electronics");
+
+// Get all categories
+const allCategories = await categoryService.getAllCategories();
+const activeCategories = await categoryService.getAllCategories(true);
+
+// Update category
+await categoryService.updateCategory(category.id, {
+  name: "Consumer Electronics",
+  description: "Updated description",
+});
+
+// Deactivate category
+await categoryService.deactivateCategory(category.id);
+
+// Activate category
+await categoryService.activateCategory(category.id);
+```
+
+### Product Management
+
+**Note:** Products must be assigned to a category. Create a category first.
+
+```typescript
+// First, create a category
+const category = await categoryService.createCategory("Electronics");
+
+// Create product (categoryId is required)
 const product = await productService.createProduct(
   "Laptop Dell XPS 15",
-  "SKU-LAPTOP-001"
+  "SKU-LAPTOP-001",
+  category.id
 );
 
 // Get product
 const foundProduct = await productService.getProductById(product.id);
 const productBySku = await productService.getProductBySku("SKU-LAPTOP-001");
 
+// Get products by category
+const electronicsProducts = await productService.getProductsByCategory(
+  category.id
+);
+
 // Update product
 await productService.updateProduct(product.id, {
   name: "Laptop Dell XPS 15 (2024)",
+  categoryId: category.id, // Can change category
 });
 
 // Deactivate product
@@ -348,12 +395,23 @@ const productReservations = await reservationService.getReservationsByProduct(
 
 ## API Reference
 
+### CategoryService
+
+- `createCategory(name: string, description?: string): Promise<Category>`
+- `getCategoryById(id: CategoryId): Promise<Category>`
+- `getCategoryByName(name: string): Promise<Category>`
+- `getAllCategories(activeOnly?: boolean): Promise<Category[]>`
+- `updateCategory(id: CategoryId, updates: Partial<{ name: string; description: string | null }>): Promise<Category>`
+- `deactivateCategory(id: CategoryId): Promise<Category>`
+- `activateCategory(id: CategoryId): Promise<Category>`
+
 ### ProductService
 
-- `createProduct(name: string, sku: string): Promise<Product>`
-- `getProductById(id: ProductId): Promise<Product | null>`
-- `getProductBySku(sku: string): Promise<Product | null>`
-- `updateProduct(id: ProductId, updates: Partial<Product>): Promise<Product>`
+- `createProduct(name: string, sku: string, categoryId: CategoryId): Promise<Product>`
+- `getProductById(id: ProductId): Promise<Product>`
+- `getProductBySku(sku: string): Promise<Product>`
+- `getProductsByCategory(categoryId: CategoryId): Promise<Product[]>`
+- `updateProduct(id: ProductId, updates: Partial<{ name: string; sku: string; categoryId: CategoryId; isSellable: boolean; isActive: boolean }>): Promise<Product>`
 - `deactivateProduct(id: ProductId): Promise<Product>`
 - `activateProduct(id: ProductId): Promise<Product>`
 
@@ -404,13 +462,22 @@ const productReservations = await reservationService.getReservationsByProduct(
 
 The package uses the following tables:
 
-- `products` - Products
+- `categories` - Product categories
+- `products` - Products (requires category_id)
 - `warehouses` - Warehouses
 - `stock` - Stock levels (Product × Warehouse)
 - `inventory_transactions` - Inventory transactions
 - `reservations` - Stock reservations
 - `orders` - Orders
 - `order_items` - Order items
+
+**Relationships:**
+
+- Products must belong to a category (`products.category_id` → `categories.id`)
+- Stock entries reference products and warehouses
+- Orders contain order items that reference products
+- Reservations reference products and warehouses
+- Inventory transactions reference products and warehouses
 
 ## Logging
 
