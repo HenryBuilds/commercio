@@ -17,6 +17,9 @@ export { InventoryTransactionRepository } from "./repositories/inventory-transac
 export { OrderRepository } from "./repositories/order.repository";
 export { ReservationRepository } from "./repositories/reservation.repository";
 
+// Services (business logic layer)
+export * from "./services/index";
+
 // Mappers (for DB ↔ Domain transformations)
 export * from "./db/mappers/index";
 

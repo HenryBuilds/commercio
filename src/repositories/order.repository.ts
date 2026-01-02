@@ -10,36 +10,39 @@ import {
 
 export class OrderRepository {
   async create(order: Order): Promise<Order> {
-    // Create order
-    const [createdOrder] = await db
-      .insert(orders)
-      .values({
-        id: order.id,
-        customerId: order.customerId,
-        status: order.status,
-        createdAt: order.createdAt,
-      })
-      .returning();
+    // Use transaction to ensure atomicity
+    return await db.transaction(async (tx) => {
+      // Create order
+      const [createdOrder] = await tx
+        .insert(orders)
+        .values({
+          id: order.id,
+          customerId: order.customerId,
+          status: order.status,
+          createdAt: order.createdAt,
+        })
+        .returning();
 
-    if (!createdOrder) {
-      throw new Error("Failed to create order");
-    }
+      if (!createdOrder) {
+        throw new Error("Failed to create order");
+      }
 
-    // Create order items
-    const createdItems = await db
-      .insert(orderItems)
-      .values(
-        order.items.map((item) => ({
-          id: item.id,
-          orderId: order.id,
-          productId: item.productId,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-        }))
-      )
-      .returning();
+      // Create order items
+      const createdItems = await tx
+        .insert(orderItems)
+        .values(
+          order.items.map((item) => ({
+            id: item.id,
+            orderId: order.id,
+            productId: item.productId,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+          }))
+        )
+        .returning();
 
-    return this.toDomain(createdOrder, createdItems);
+      return this.toDomain(createdOrder, createdItems);
+    });
   }
 
   async findById(id: OrderId): Promise<Order | null> {

@@ -7,28 +7,37 @@ import { WarehouseId } from "../modules/warehouse/warehouse.model";
 
 export class StockRepository {
   async upsert(stockItem: Stock): Promise<Stock> {
-    const [result] = await db
-      .insert(stock)
-      .values({
-        productId: stockItem.productId,
-        warehouseId: stockItem.warehouseId,
-        quantity: stockItem.quantity,
-        updatedAt: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: [stock.productId, stock.warehouseId],
-        set: {
+    // Check if stock entry exists
+    const existing = await this.findByProductAndWarehouse(
+      stockItem.productId,
+      stockItem.warehouseId
+    );
+
+    if (existing) {
+      // Update existing entry
+      return await this.updateQuantity(
+        stockItem.productId,
+        stockItem.warehouseId,
+        stockItem.quantity
+      );
+    } else {
+      // Insert new entry
+      const [result] = await db
+        .insert(stock)
+        .values({
+          productId: stockItem.productId,
+          warehouseId: stockItem.warehouseId,
           quantity: stockItem.quantity,
           updatedAt: new Date(),
-        },
-      })
-      .returning();
+        })
+        .returning();
 
-    if (!result) {
-      throw new Error("Failed to upsert stock");
+      if (!result) {
+        throw new Error("Failed to upsert stock");
+      }
+
+      return this.toDomain(result);
     }
-
-    return this.toDomain(result);
   }
 
   async findByProductAndWarehouse(
