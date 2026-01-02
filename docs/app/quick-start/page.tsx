@@ -1,23 +1,41 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CodeBlock } from "@/components/code-block"
 import { Separator } from "@/components/ui/separator"
+import { MermaidDiagram } from "@/components/mermaid-diagram"
+import { Rocket, FolderTree, Package, Warehouse, ShoppingCart, CheckCircle2 } from "lucide-react"
 
 export default function QuickStartPage() {
   return (
-    <div className="space-y-8">
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight">Quick Start</h1>
-        <p className="text-xl text-muted-foreground">
-          Get up and running with Commercio in minutes.
-        </p>
+    <div className="space-y-12">
+      {/* Hero Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Rocket className="h-6 w-6" />
+          </div>
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight">Quick Start</h1>
+            <p className="text-xl text-muted-foreground">
+              Get up and running with Commercio in minutes.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <Card>
+      {/* Basic Setup */}
+      <Card className="border-2">
         <CardHeader>
-          <CardTitle>Basic Setup</CardTitle>
-          <CardDescription>
-            Initialize services and start using Commercio
-          </CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <CheckCircle2 className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle>Basic Setup</CardTitle>
+              <CardDescription>
+                Initialize services and start using Commercio
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <CodeBlock
@@ -73,11 +91,60 @@ const orderService = new OrderService(
         </CardContent>
       </Card>
 
+      {/* Quick Start Flow */}
+      <Card className="border-2">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Rocket className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle>Quick Start Flow</CardTitle>
+              <CardDescription>
+                Visual overview of the setup process
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <MermaidDiagram
+            chart={`flowchart TB
+    subgraph row1[" "]
+        direction LR
+        A["Initialize Database"] --> B["Create Category"]
+        B --> C["Create Product"]
+        C --> D["Create Warehouse"]
+        D --> E["Set Stock"]
+    end
+    
+    subgraph row2[" "]
+        direction LR
+        F["Create Order"] --> G["Confirm Order"]
+        G --> H["Mark as Paid"]
+        H --> I["Ship Order"]
+        I --> J["Complete Order"]
+    end
+    
+    E --> F
+    
+    style row1 fill:transparent,stroke:none
+    style row2 fill:transparent,stroke:none`}
+            title="Setup Process"
+          />
+        </CardContent>
+      </Card>
+
       <Separator />
 
-      <div className="space-y-6">
+      {/* Steps */}
+      <div className="space-y-8">
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">Step 1: Create a Category</h2>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+              1
+            </div>
+            <h2 className="text-2xl font-semibold tracking-tight">Create a Category</h2>
+          </div>
           <Card>
             <CardContent className="pt-6">
               <CodeBlock
@@ -94,7 +161,12 @@ console.log(\`Category created: \${category.id}\`);`}
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">Step 2: Create a Product</h2>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+              2
+            </div>
+            <h2 className="text-2xl font-semibold tracking-tight">Create a Product</h2>
+          </div>
           <Card>
             <CardContent className="pt-6">
               <CodeBlock
@@ -112,7 +184,12 @@ console.log(\`Product created: \${product.id}\`);`}
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">Step 3: Create a Warehouse</h2>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+              3
+            </div>
+            <h2 className="text-2xl font-semibold tracking-tight">Create a Warehouse</h2>
+          </div>
           <Card>
             <CardContent className="pt-6">
               <CodeBlock
@@ -128,7 +205,12 @@ console.log(\`Warehouse created: \${warehouse.id}\`);`}
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">Step 4: Set Stock</h2>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+              4
+            </div>
+            <h2 className="text-2xl font-semibold tracking-tight">Set Stock</h2>
+          </div>
           <Card>
             <CardContent className="pt-6">
               <CodeBlock
@@ -144,7 +226,12 @@ console.log(\`Current stock: \${stock?.quantity}\`);`}
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">Step 5: Create an Order</h2>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+              5
+            </div>
+            <h2 className="text-2xl font-semibold tracking-tight">Create an Order</h2>
+          </div>
           <Card>
             <CardContent className="pt-6">
               <CodeBlock
@@ -179,4 +266,3 @@ const completedOrder = await orderService.completeOrder(order.id);`}
     </div>
   )
 }
-
