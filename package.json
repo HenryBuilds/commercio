@@ -42,11 +42,13 @@
     "typescript": "^5"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy:migrations",
+    "copy:migrations": "node -e \"require('fs').cpSync('src/drizzle', 'dist/db/drizzle', {recursive: true, force: true})\"",
     "dev": "tsx watch src/index.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
+    "setup:migrations": "tsx scripts/setup-migrations.ts",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",

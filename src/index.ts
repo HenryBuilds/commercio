@@ -9,6 +9,9 @@ export {
   type DatabaseConfig,
 } from "./db/init";
 
+// Database migrations
+export { runMigrations, runMigrationsWithDb } from "./db/migrate";
+
 // Logger
 export { logger, createLogger } from "./utils/logger";
 

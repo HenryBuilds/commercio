@@ -2,6 +2,7 @@ import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Pool, PoolConfig } from "pg";
 import * as schema from "./schema/index";
 import { logger } from "../utils/logger";
+import { runMigrationsWithDb } from "./migrate";
 
 let dbInstance: NodePgDatabase<typeof schema> | null = null;
 let poolInstance: Pool | null = null;
@@ -27,6 +28,11 @@ export interface DatabaseConfig {
     PoolConfig,
     "connectionString" | "host" | "port" | "database" | "user" | "password"
   >;
+  /**
+   * Automatically run migrations after initialization
+   * Default: false
+   */
+  runMigrations?: boolean;
 }
 
 /**
@@ -89,6 +95,15 @@ export function initDatabase(config: DatabaseConfig): void {
   dbInstance = drizzle(poolInstance, { schema });
 
   logger.info("Database connection initialized successfully");
+
+  // Run migrations if requested
+  if (config.runMigrations) {
+    // Run migrations asynchronously to not block initialization
+    runMigrationsWithDb(dbInstance as any).catch((error) => {
+      logger.error({ error }, "Failed to run migrations during initialization");
+      throw error;
+    });
+  }
 }
 
 /**

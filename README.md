@@ -67,29 +67,46 @@ initDatabase({
 
 ### 3. Run Migrations
 
-The package includes Drizzle schema definitions. You need to run migrations in your project:
+The package includes pre-built migrations that can be run automatically. You have two options:
+
+**Option A: Automatic Migration (Recommended)**
+
+Run migrations automatically when initializing the database:
 
 ```typescript
-import { schema } from "commercio";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { migrate } from "drizzle-orm/node-postgres/migrator";
-import { Pool } from "pg";
+import { initDatabase } from "commercio";
 
-const pool = new Pool({
+initDatabase({
+  connectionString: process.env.DATABASE_URL,
+  runMigrations: true, // Automatically run migrations
+});
+```
+
+**Option B: Manual Migration**
+
+Run migrations manually:
+
+```typescript
+import { runMigrations } from "commercio";
+
+// Run migrations with a connection string
+await runMigrations(process.env.DATABASE_URL);
+```
+
+Or if you've already initialized the database:
+
+```typescript
+import { initDatabase, runMigrationsWithDb, db } from "commercio";
+
+initDatabase({
   connectionString: process.env.DATABASE_URL,
 });
 
-const db = drizzle(pool, { schema });
-
-await migrate(db, { migrationsFolder: "./drizzle" });
+// Run migrations using the initialized connection
+await runMigrationsWithDb(db);
 ```
 
-Or use Drizzle Kit directly:
-
-```bash
-npx drizzle-kit generate
-npx drizzle-kit migrate
-```
+That's it! No need to configure Drizzle Kit or generate migration files manually. The migrations are included in the package and run automatically.
 
 ## Usage
 
