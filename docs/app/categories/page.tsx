@@ -38,9 +38,9 @@ export default function CategoriesPage() {
         </CardHeader>
         <CardContent>
           <CodeBlock
-            code={`import { CategoryService, CategoryRepository } from "commercio";
+            code={`import { createCategoryService } from "commercio";
 
-const categoryService = new CategoryService(new CategoryRepository());
+const categoryService = createCategoryService();
 
 // Create category
 const category = await categoryService.createCategory(

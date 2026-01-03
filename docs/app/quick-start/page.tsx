@@ -41,20 +41,7 @@ export default function QuickStartPage() {
           <CodeBlock
             code={`import {
   initDatabase,
-  CategoryService,
-  ProductService,
-  WarehouseService,
-  StockService,
-  OrderService,
-  CategoryRepository,
-  ProductRepository,
-  WarehouseRepository,
-  StockRepository,
-  OrderRepository,
-  ReservationRepository,
-  ReservationService,
-  InventoryTransactionService,
-  InventoryTransactionRepository,
+  createServices,
 } from "commercio";
 
 // Initialize database connection
@@ -63,30 +50,16 @@ initDatabase({
   runMigrations: true,
 });
 
-// Create repositories
-const categoryRepo = new CategoryRepository();
-const productRepo = new ProductRepository();
-const warehouseRepo = new WarehouseRepository();
-const stockRepo = new StockRepository();
-const orderRepo = new OrderRepository();
-const reservationRepo = new ReservationRepository();
-const transactionRepo = new InventoryTransactionRepository();
-
-// Create services
-const categoryService = new CategoryService(categoryRepo);
-const productService = new ProductService(productRepo);
-const warehouseService = new WarehouseService(warehouseRepo);
-const stockService = new StockService(stockRepo, productRepo, warehouseRepo);
-const reservationService = new ReservationService(reservationRepo, stockRepo);
-const transactionService = new InventoryTransactionService(
-  transactionRepo,
-  stockRepo
-);
-const orderService = new OrderService(
-  orderRepo,
+// Create all services at once - no need to manually inject repositories!
+const {
+  categoryService,
+  productService,
+  warehouseService,
+  stockService,
+  orderService,
   reservationService,
-  transactionService
-);`}
+  inventoryTransactionService,
+} = createServices();`}
           />
         </CardContent>
       </Card>

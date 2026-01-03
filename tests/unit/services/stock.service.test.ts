@@ -1,19 +1,13 @@
 import { describe, it, expect, beforeEach, beforeAll } from "vitest";
+import { createServices } from "../../../src/services/factory";
 import { StockService } from "../../../src/services/stock.service";
-import { StockRepository } from "../../../src/repositories/stock.repository";
-import { ProductRepository } from "../../../src/repositories/product.repository";
-import { WarehouseRepository } from "../../../src/repositories/warehouse.repository";
 import { ProductService } from "../../../src/services/product.service";
 import { WarehouseService } from "../../../src/services/warehouse.service";
 import { CategoryService } from "../../../src/services/category.service";
-import { CategoryRepository } from "../../../src/repositories/category.repository";
 import { TestDbHelper } from "../../helpers/db";
 
 describe("StockService", () => {
   let stockService: StockService;
-  let stockRepository: StockRepository;
-  let productRepository: ProductRepository;
-  let warehouseRepository: WarehouseRepository;
   let productService: ProductService;
   let warehouseService: WarehouseService;
   let categoryService: CategoryService;
@@ -24,18 +18,11 @@ describe("StockService", () => {
   });
 
   beforeEach(() => {
-    stockRepository = new StockRepository();
-    productRepository = new ProductRepository();
-    warehouseRepository = new WarehouseRepository();
-    const categoryRepository = new CategoryRepository();
-    stockService = new StockService(
-      stockRepository,
-      productRepository,
-      warehouseRepository
-    );
-    productService = new ProductService(productRepository);
-    warehouseService = new WarehouseService(warehouseRepository);
-    categoryService = new CategoryService(categoryRepository);
+    const services = createServices();
+    stockService = services.stockService;
+    productService = services.productService;
+    warehouseService = services.warehouseService;
+    categoryService = services.categoryService;
   });
 
   describe("setStock", () => {

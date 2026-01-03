@@ -8,21 +8,7 @@
  * 4. Create and process orders
  */
 
-import { initDatabase } from "../src/db/init";
-import { ProductService } from "../src/services/product.service";
-import { WarehouseService } from "../src/services/warehouse.service";
-import { StockService } from "../src/services/stock.service";
-import { OrderService } from "../src/services/order.service";
-import { CategoryService } from "../src/services/category.service";
-import { ProductRepository } from "../src/repositories/product.repository";
-import { WarehouseRepository } from "../src/repositories/warehouse.repository";
-import { StockRepository } from "../src/repositories/stock.repository";
-import { OrderRepository } from "../src/repositories/order.repository";
-import { ReservationRepository } from "../src/repositories/reservation.repository";
-import { ReservationService } from "../src/services/reservation.service";
-import { InventoryTransactionService } from "../src/services/inventory-transaction.service";
-import { InventoryTransactionRepository } from "../src/repositories/inventory-transaction.repository";
-import { CategoryRepository } from "../src/repositories/category.repository";
+import { initDatabase, createServices } from "../src/index";
 import { OrderStatus } from "../src/modules/order/order.model";
 import { logger } from "../src/utils/logger";
 
@@ -34,32 +20,17 @@ async function main() {
     connectionString:
       process.env.DATABASE_URL ||
       "postgresql://user:password@localhost:5432/my_erp_db",
+    runMigrations: true,
   });
 
-  // 2. Create repositories
-  const productRepo = new ProductRepository();
-  const warehouseRepo = new WarehouseRepository();
-  const stockRepo = new StockRepository();
-  const orderRepo = new OrderRepository();
-  const reservationRepo = new ReservationRepository();
-  const transactionRepo = new InventoryTransactionRepository();
-  const categoryRepo = new CategoryRepository();
-
-  // 3. Create services
-  const productService = new ProductService(productRepo);
-  const warehouseService = new WarehouseService(warehouseRepo);
-  const stockService = new StockService(stockRepo, productRepo, warehouseRepo);
-  const reservationService = new ReservationService(reservationRepo, stockRepo);
-  const transactionService = new InventoryTransactionService(
-    transactionRepo,
-    stockRepo
-  );
-  const orderService = new OrderService(
-    orderRepo,
-    reservationService,
-    transactionService
-  );
-  const categoryService = new CategoryService(categoryRepo);
+  // 2. Create all services at once (no need to manually inject repositories!)
+  const {
+    categoryService,
+    productService,
+    warehouseService,
+    stockService,
+    orderService,
+  } = createServices();
 
   // 4. Create a category
   logger.info("Creating category...");

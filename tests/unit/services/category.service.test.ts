@@ -1,12 +1,11 @@
 import { describe, it, expect, beforeEach, beforeAll } from "vitest";
+import { createCategoryService } from "../../../src/services/factory";
 import { CategoryService } from "../../../src/services/category.service";
-import { CategoryRepository } from "../../../src/repositories/category.repository";
 import { Category } from "../../../src/modules/category/category.model";
 import { TestDbHelper } from "../../helpers/db";
 
 describe("CategoryService", () => {
   let categoryService: CategoryService;
-  let categoryRepository: CategoryRepository;
 
   beforeAll(async () => {
     // Clear database once before all tests in this file
@@ -14,8 +13,7 @@ describe("CategoryService", () => {
   });
 
   beforeEach(() => {
-    categoryRepository = new CategoryRepository();
-    categoryService = new CategoryService(categoryRepository);
+    categoryService = createCategoryService();
   });
 
   describe("createCategory", () => {

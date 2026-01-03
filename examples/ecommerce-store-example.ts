@@ -8,48 +8,22 @@
 
 import {
   initDatabase,
-  ProductService,
-  WarehouseService,
-  StockService,
-  OrderService,
-  ReservationService,
-  CategoryService,
-  ProductRepository,
-  WarehouseRepository,
-  StockRepository,
-  OrderRepository,
-  ReservationRepository,
-  InventoryTransactionService,
-  InventoryTransactionRepository,
-  CategoryRepository,
+  createServices,
   OrderStatus,
 } from "../src/index";
 import { logger } from "../src/utils/logger";
 
 // Initialize services (typically done once at app startup)
 function initializeServices() {
-  const productRepo = new ProductRepository();
-  const warehouseRepo = new WarehouseRepository();
-  const stockRepo = new StockRepository();
-  const orderRepo = new OrderRepository();
-  const reservationRepo = new ReservationRepository();
-  const transactionRepo = new InventoryTransactionRepository();
-  const categoryRepo = new CategoryRepository();
-
-  const productService = new ProductService(productRepo);
-  const warehouseService = new WarehouseService(warehouseRepo);
-  const stockService = new StockService(stockRepo, productRepo, warehouseRepo);
-  const reservationService = new ReservationService(reservationRepo, stockRepo);
-  const transactionService = new InventoryTransactionService(
-    transactionRepo,
-    stockRepo
-  );
-  const orderService = new OrderService(
-    orderRepo,
+  // Create all services at once - no need to manually inject repositories!
+  const {
+    productService,
+    warehouseService,
+    stockService,
+    orderService,
     reservationService,
-    transactionService
-  );
-  const categoryService = new CategoryService(categoryRepo);
+    categoryService,
+  } = createServices();
 
   return {
     productService,

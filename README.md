@@ -113,23 +113,70 @@ That's it! No need to configure Drizzle Kit or generate migration files manually
 
 ### Basic Setup
 
+**Option A: Using Factory Functions (Recommended)**
+
+The easiest way to get started - no need to manually inject repositories:
+
+```typescript
+import { initDatabase, createServices } from "commercio";
+
+// Initialize database connection
+initDatabase({
+  connectionString: process.env.DATABASE_URL,
+  runMigrations: true,
+});
+
+// Create all services at once with default repositories
+const {
+  categoryService,
+  productService,
+  warehouseService,
+  stockService,
+  orderService,
+  reservationService,
+  inventoryTransactionService,
+} = createServices();
+```
+
+**Option B: Individual Factory Functions**
+
+Create services individually if you only need specific ones:
+
+```typescript
+import {
+  initDatabase,
+  createCategoryService,
+  createProductService,
+  createWarehouseService,
+  createStockService,
+  createOrderService,
+} from "commercio";
+
+// Initialize database connection
+initDatabase({
+  connectionString: process.env.DATABASE_URL,
+  runMigrations: true,
+});
+
+// Create only the services you need
+const categoryService = createCategoryService();
+const productService = createProductService();
+const warehouseService = createWarehouseService();
+const stockService = createStockService();
+const orderService = createOrderService();
+```
+
+**Option C: Manual Dependency Injection (Advanced)**
+
+For advanced use cases or testing, you can still manually inject repositories:
+
 ```typescript
 import {
   initDatabase,
   CategoryService,
   ProductService,
-  WarehouseService,
-  StockService,
-  OrderService,
   CategoryRepository,
   ProductRepository,
-  WarehouseRepository,
-  StockRepository,
-  OrderRepository,
-  ReservationRepository,
-  ReservationService,
-  InventoryTransactionService,
-  InventoryTransactionRepository,
 } from "commercio";
 
 // Initialize database connection
@@ -137,30 +184,13 @@ initDatabase({
   connectionString: process.env.DATABASE_URL,
 });
 
-// Create repositories
+// Create repositories manually
 const categoryRepo = new CategoryRepository();
 const productRepo = new ProductRepository();
-const warehouseRepo = new WarehouseRepository();
-const stockRepo = new StockRepository();
-const orderRepo = new OrderRepository();
-const reservationRepo = new ReservationRepository();
-const transactionRepo = new InventoryTransactionRepository();
 
-// Create services
+// Create services with custom repositories
 const categoryService = new CategoryService(categoryRepo);
 const productService = new ProductService(productRepo);
-const warehouseService = new WarehouseService(warehouseRepo);
-const stockService = new StockService(stockRepo, productRepo, warehouseRepo);
-const reservationService = new ReservationService(reservationRepo, stockRepo);
-const transactionService = new InventoryTransactionService(
-  transactionRepo,
-  stockRepo
-);
-const orderService = new OrderService(
-  orderRepo,
-  reservationService,
-  transactionService
-);
 ```
 
 ### Category Management

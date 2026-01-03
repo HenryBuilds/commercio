@@ -7,3 +7,6 @@ export { InventoryTransactionService } from "./inventory-transaction.service";
 export { ReservationService } from "./reservation.service";
 export { OrderService } from "./order.service";
 
+// Export factory functions for easy service creation
+export * from "./factory";
+

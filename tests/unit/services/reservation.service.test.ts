@@ -1,21 +1,15 @@
 import { describe, it, expect, beforeEach, beforeAll } from "vitest";
+import { createServices } from "../../../src/services/factory";
 import { ReservationService } from "../../../src/services/reservation.service";
-import { ReservationRepository } from "../../../src/repositories/reservation.repository";
-import { StockRepository } from "../../../src/repositories/stock.repository";
 import { ProductService } from "../../../src/services/product.service";
 import { WarehouseService } from "../../../src/services/warehouse.service";
 import { StockService } from "../../../src/services/stock.service";
 import { CategoryService } from "../../../src/services/category.service";
-import { ProductRepository } from "../../../src/repositories/product.repository";
-import { WarehouseRepository } from "../../../src/repositories/warehouse.repository";
-import { CategoryRepository } from "../../../src/repositories/category.repository";
 import { ReservationStatus } from "../../../src/modules/inventory/reservation.model";
 import { TestDbHelper } from "../../helpers/db";
 
 describe("ReservationService", () => {
   let reservationService: ReservationService;
-  let reservationRepository: ReservationRepository;
-  let stockRepository: StockRepository;
   let productService: ProductService;
   let warehouseService: WarehouseService;
   let stockService: StockService;
@@ -27,20 +21,12 @@ describe("ReservationService", () => {
   });
 
   beforeEach(() => {
-    reservationRepository = new ReservationRepository();
-    stockRepository = new StockRepository();
-    const productRepo = new ProductRepository();
-    const warehouseRepo = new WarehouseRepository();
-    const categoryRepo = new CategoryRepository();
-
-    reservationService = new ReservationService(
-      reservationRepository,
-      stockRepository
-    );
-    productService = new ProductService(productRepo);
-    warehouseService = new WarehouseService(warehouseRepo);
-    stockService = new StockService(stockRepository, productRepo, warehouseRepo);
-    categoryService = new CategoryService(categoryRepo);
+    const services = createServices();
+    reservationService = services.reservationService;
+    productService = services.productService;
+    warehouseService = services.warehouseService;
+    stockService = services.stockService;
+    categoryService = services.categoryService;
   });
 
   describe("createReservation", () => {

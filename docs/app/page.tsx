@@ -246,7 +246,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <CodeBlock
-              code={`import { initDatabase, CategoryService, ProductService } from "commercio";
+              code={`import { initDatabase, createServices } from "commercio";
 
 // Initialize database
 initDatabase({
@@ -254,9 +254,8 @@ initDatabase({
   runMigrations: true,
 });
 
-// Create services
-const categoryService = new CategoryService(new CategoryRepository());
-const productService = new ProductService(new ProductRepository());
+// Create all services at once - no need to manually inject repositories!
+const { categoryService, productService } = createServices();
 
 // Create a category
 const category = await categoryService.createCategory(

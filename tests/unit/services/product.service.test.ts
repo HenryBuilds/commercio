@@ -1,16 +1,13 @@
 import { describe, it, expect, beforeEach, beforeAll } from "vitest";
+import { createServices } from "../../../src/services/factory";
 import { ProductService } from "../../../src/services/product.service";
-import { ProductRepository } from "../../../src/repositories/product.repository";
 import { CategoryService } from "../../../src/services/category.service";
-import { CategoryRepository } from "../../../src/repositories/category.repository";
 import { Product } from "../../../src/modules/product/product.model";
 import { TestDbHelper } from "../../helpers/db";
 
 describe("ProductService", () => {
   let productService: ProductService;
-  let productRepository: ProductRepository;
   let categoryService: CategoryService;
-  let categoryRepository: CategoryRepository;
 
   beforeAll(async () => {
     // Clear database once before all tests in this file
@@ -18,10 +15,9 @@ describe("ProductService", () => {
   });
 
   beforeEach(() => {
-    productRepository = new ProductRepository();
-    categoryRepository = new CategoryRepository();
-    productService = new ProductService(productRepository);
-    categoryService = new CategoryService(categoryRepository);
+    const services = createServices();
+    productService = services.productService;
+    categoryService = services.categoryService;
   });
 
   describe("createProduct", () => {
@@ -29,6 +25,7 @@ describe("ProductService", () => {
       const category = await categoryService.createCategory(
         `Category-TEST-${Date.now()}-001`
       );
+      
       const sku = `SKU-TEST-${Date.now()}-001`;
       const product = await productService.createProduct(
         "Test Product",

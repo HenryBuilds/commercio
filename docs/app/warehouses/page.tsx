@@ -37,9 +37,9 @@ export default function WarehousesPage() {
         </CardHeader>
         <CardContent>
           <CodeBlock
-            code={`import { WarehouseService, WarehouseRepository } from "commercio";
+            code={`import { createWarehouseService } from "commercio";
 
-const warehouseService = new WarehouseService(new WarehouseRepository());
+const warehouseService = createWarehouseService();
 
 // Create warehouse
 const warehouse = await warehouseService.createWarehouse(

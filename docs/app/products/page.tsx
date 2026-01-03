@@ -108,10 +108,10 @@ export default function ProductsPage() {
         </CardHeader>
         <CardContent>
           <CodeBlock
-            code={`import { ProductService, ProductRepository, CategoryService, CategoryRepository } from "commercio";
+            code={`import { createProductService, createCategoryService } from "commercio";
 
-const productService = new ProductService(new ProductRepository());
-const categoryService = new CategoryService(new CategoryRepository());
+const productService = createProductService();
+const categoryService = createCategoryService();
 
 // First, create a category
 const category = await categoryService.createCategory("Electronics");

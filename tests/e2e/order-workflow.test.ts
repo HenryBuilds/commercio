@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, beforeAll } from "vitest";
 import { TestDbHelper } from "../helpers/db";
+import { createServices } from "../../src/services/factory";
 import { ProductService } from "../../src/services/product.service";
 import { WarehouseService } from "../../src/services/warehouse.service";
 import { StockService } from "../../src/services/stock.service";
@@ -7,13 +8,6 @@ import { OrderService } from "../../src/services/order.service";
 import { InventoryTransactionService } from "../../src/services/inventory-transaction.service";
 import { ReservationService } from "../../src/services/reservation.service";
 import { CategoryService } from "../../src/services/category.service";
-import { ProductRepository } from "../../src/repositories/product.repository";
-import { WarehouseRepository } from "../../src/repositories/warehouse.repository";
-import { StockRepository } from "../../src/repositories/stock.repository";
-import { OrderRepository } from "../../src/repositories/order.repository";
-import { InventoryTransactionRepository } from "../../src/repositories/inventory-transaction.repository";
-import { ReservationRepository } from "../../src/repositories/reservation.repository";
-import { CategoryRepository } from "../../src/repositories/category.repository";
 import { OrderStatus } from "../../src/modules/order/order.model";
 import { InventoryTransactionType } from "../../src/modules/inventory/inventory.model";
 
@@ -27,29 +21,15 @@ describe("E2E: Order Workflow", () => {
   let categoryService: CategoryService;
 
   beforeEach(() => {
-    // Initialize services
-    const productRepo = new ProductRepository();
-    const warehouseRepo = new WarehouseRepository();
-    const stockRepo = new StockRepository();
-    const orderRepo = new OrderRepository();
-    const transactionRepo = new InventoryTransactionRepository();
-    const reservationRepo = new ReservationRepository();
-    const categoryRepo = new CategoryRepository();
-
-    productService = new ProductService(productRepo);
-    warehouseService = new WarehouseService(warehouseRepo);
-    stockService = new StockService(stockRepo, productRepo, warehouseRepo);
-    transactionService = new InventoryTransactionService(
-      transactionRepo,
-      stockRepo
-    );
-    reservationService = new ReservationService(reservationRepo, stockRepo);
-    orderService = new OrderService(
-      orderRepo,
-      reservationService,
-      transactionService
-    );
-    categoryService = new CategoryService(categoryRepo);
+    // Initialize all services at once
+    const services = createServices();
+    productService = services.productService;
+    warehouseService = services.warehouseService;
+    stockService = services.stockService;
+    orderService = services.orderService;
+    transactionService = services.inventoryTransactionService;
+    reservationService = services.reservationService;
+    categoryService = services.categoryService;
   });
 
   it("should complete full order workflow: create -> confirm -> pay -> ship -> complete", async () => {

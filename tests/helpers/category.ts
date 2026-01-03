@@ -1,5 +1,5 @@
+import { createCategoryService } from "../../src/services/factory";
 import { CategoryService } from "../../src/services/category.service";
-import { CategoryRepository } from "../../src/repositories/category.repository";
 
 let categoryServiceInstance: CategoryService | null = null;
 
@@ -9,8 +9,7 @@ let categoryServiceInstance: CategoryService | null = null;
  */
 export async function getOrCreateTestCategory(name?: string): Promise<string> {
   if (!categoryServiceInstance) {
-    const categoryRepo = new CategoryRepository();
-    categoryServiceInstance = new CategoryService(categoryRepo);
+    categoryServiceInstance = createCategoryService();
   }
 
   const categoryName = name || `Test-Category-${Date.now()}`;

@@ -1,15 +1,11 @@
 import { describe, it, expect, beforeEach, beforeAll } from "vitest";
 import { TestDbHelper } from "../helpers/db";
+import { createServices } from "../../src/services/factory";
 import { ProductService } from "../../src/services/product.service";
 import { WarehouseService } from "../../src/services/warehouse.service";
 import { StockService } from "../../src/services/stock.service";
 import { InventoryTransactionService } from "../../src/services/inventory-transaction.service";
 import { CategoryService } from "../../src/services/category.service";
-import { ProductRepository } from "../../src/repositories/product.repository";
-import { WarehouseRepository } from "../../src/repositories/warehouse.repository";
-import { StockRepository } from "../../src/repositories/stock.repository";
-import { InventoryTransactionRepository } from "../../src/repositories/inventory-transaction.repository";
-import { CategoryRepository } from "../../src/repositories/category.repository";
 import { InventoryTransactionType } from "../../src/modules/inventory/inventory.model";
 
 describe("E2E: Inventory Workflow", () => {
@@ -20,20 +16,13 @@ describe("E2E: Inventory Workflow", () => {
   let categoryService: CategoryService;
 
   beforeEach(() => {
-    const productRepo = new ProductRepository();
-    const warehouseRepo = new WarehouseRepository();
-    const stockRepo = new StockRepository();
-    const transactionRepo = new InventoryTransactionRepository();
-    const categoryRepo = new CategoryRepository();
-
-    productService = new ProductService(productRepo);
-    warehouseService = new WarehouseService(warehouseRepo);
-    stockService = new StockService(stockRepo, productRepo, warehouseRepo);
-    transactionService = new InventoryTransactionService(
-      transactionRepo,
-      stockRepo
-    );
-    categoryService = new CategoryService(categoryRepo);
+    // Initialize all services at once
+    const services = createServices();
+    productService = services.productService;
+    warehouseService = services.warehouseService;
+    stockService = services.stockService;
+    transactionService = services.inventoryTransactionService;
+    categoryService = services.categoryService;
   });
 
   it("should handle receipt transaction and increase stock", async () => {
