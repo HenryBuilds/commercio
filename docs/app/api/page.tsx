@@ -1,65 +1,34 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CodeBlock } from "@/components/code-block"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Code2, FolderTree, Package, Warehouse, Database, ShoppingCart } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 
 export default function ApiPage() {
   return (
     <div className="space-y-12">
-      {/* Hero Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Code2 className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">API Reference</h1>
-            <p className="text-xl text-muted-foreground">
-              Complete API documentation for all services.
-            </p>
-          </div>
-        </div>
+      <div className="space-y-2">
+        <h1 className="text-4xl font-bold tracking-tight">API Reference</h1>
+        <p className="text-xl text-muted-foreground">
+          Complete API documentation for all services.
+        </p>
       </div>
 
       <Tabs defaultValue="category" className="w-full">
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="category" className="flex items-center gap-2">
-            <FolderTree className="h-4 w-4" />
-            <span className="hidden sm:inline">Category</span>
-          </TabsTrigger>
-          <TabsTrigger value="product" className="flex items-center gap-2">
-            <Package className="h-4 w-4" />
-            <span className="hidden sm:inline">Product</span>
-          </TabsTrigger>
-          <TabsTrigger value="warehouse" className="flex items-center gap-2">
-            <Warehouse className="h-4 w-4" />
-            <span className="hidden sm:inline">Warehouse</span>
-          </TabsTrigger>
-          <TabsTrigger value="stock" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            <span className="hidden sm:inline">Stock</span>
-          </TabsTrigger>
-          <TabsTrigger value="order" className="flex items-center gap-2">
-            <ShoppingCart className="h-4 w-4" />
-            <span className="hidden sm:inline">Order</span>
-          </TabsTrigger>
+          <TabsTrigger value="category">Category</TabsTrigger>
+          <TabsTrigger value="product">Product</TabsTrigger>
+          <TabsTrigger value="warehouse">Warehouse</TabsTrigger>
+          <TabsTrigger value="stock">Stock</TabsTrigger>
+          <TabsTrigger value="order">Order</TabsTrigger>
         </TabsList>
 
         <TabsContent value="category" className="space-y-4 mt-6">
-          <Card className="border-2">
+          <Card>
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <FolderTree className="h-5 w-5" />
-                </div>
-                <div>
-                  <CardTitle>CategoryService</CardTitle>
-                  <CardDescription>
-                    Manage product categories
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle>CategoryService</CardTitle>
+              <CardDescription>
+                Manage product categories
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
@@ -101,19 +70,12 @@ export default function ApiPage() {
         </TabsContent>
 
         <TabsContent value="product" className="space-y-4 mt-6">
-          <Card className="border-2">
+          <Card>
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Package className="h-5 w-5" />
-                </div>
-                <div>
-                  <CardTitle>ProductService</CardTitle>
-                  <CardDescription>
-                    Manage products with SKU support
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle>ProductService</CardTitle>
+              <CardDescription>
+                Manage products with SKU support
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
@@ -155,19 +117,12 @@ export default function ApiPage() {
         </TabsContent>
 
         <TabsContent value="warehouse" className="space-y-4 mt-6">
-          <Card className="border-2">
+          <Card>
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Warehouse className="h-5 w-5" />
-                </div>
-                <div>
-                  <CardTitle>WarehouseService</CardTitle>
-                  <CardDescription>
-                    Manage warehouse locations
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle>WarehouseService</CardTitle>
+              <CardDescription>
+                Manage warehouse locations
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
@@ -199,19 +154,12 @@ export default function ApiPage() {
         </TabsContent>
 
         <TabsContent value="stock" className="space-y-4 mt-6">
-          <Card className="border-2">
+          <Card>
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Database className="h-5 w-5" />
-                </div>
-                <div>
-                  <CardTitle>StockService</CardTitle>
-                  <CardDescription>
-                    Manage inventory stock levels
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle>StockService</CardTitle>
+              <CardDescription>
+                Manage inventory stock levels
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
@@ -248,19 +196,12 @@ export default function ApiPage() {
         </TabsContent>
 
         <TabsContent value="order" className="space-y-4 mt-6">
-          <Card className="border-2">
+          <Card>
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <ShoppingCart className="h-5 w-5" />
-                </div>
-                <div>
-                  <CardTitle>OrderService</CardTitle>
-                  <CardDescription>
-                    Manage orders and order workflow
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle>OrderService</CardTitle>
+              <CardDescription>
+                Manage orders and order workflow
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>

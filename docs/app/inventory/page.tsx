@@ -1,42 +1,23 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CodeBlock } from "@/components/code-block"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MermaidDiagram } from "@/components/mermaid-diagram"
 import { Separator } from "@/components/ui/separator"
-import { Database, Plus, TrendingUp, List, ArrowUpDown, Lock } from "lucide-react"
 
 export default function InventoryPage() {
   return (
     <div className="space-y-12">
-      {/* Hero Section */}
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Database className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">Inventory Management</h1>
-            <p className="text-xl text-muted-foreground">
-              Manage stock levels and track inventory transactions.
-            </p>
-          </div>
-        </div>
+        <h1 className="text-4xl font-bold tracking-tight">Inventory</h1>
+        <p className="text-xl text-muted-foreground">
+          Manage stock levels and track inventory transactions.
+        </p>
       </div>
 
       {/* Set Stock */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Plus className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Set Stock</CardTitle>
-              <CardDescription>
-                Set initial stock level for a product in a warehouse
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Set Stock</CardTitle>
         </CardHeader>
         <CardContent>
           <CodeBlock
@@ -53,19 +34,9 @@ console.log(\`Current stock: \${stock?.quantity}\`);`}
       </Card>
 
       {/* Stock Reservation Flow */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Lock className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Stock Reservation Flow</CardTitle>
-              <CardDescription>
-                How stock reservations prevent overselling
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Stock Reservation Flow</CardTitle>
         </CardHeader>
         <CardContent>
           <MermaidDiagram
@@ -85,7 +56,7 @@ console.log(\`Current stock: \${stock?.quantity}\`);`}
     Database-->>ReservationRepository: Reserved: 30
     ReservationRepository-->>ReservationService: Reserved quantity: 30
     ReservationService->>ReservationService: Calculate available: 100 - 30 = 70
-    
+
     alt Sufficient Available Stock
         ReservationService->>ReservationRepository: create(reservation)
         ReservationRepository->>Database: INSERT INTO reservations
@@ -96,7 +67,7 @@ console.log(\`Current stock: \${stock?.quantity}\`);`}
     else Insufficient Available Stock
         ReservationService-->>OrderService: Error: Insufficient available stock
     end
-    
+
     Note over OrderService,Database: Order Shipment
     OrderService->>ReservationService: consumeReservation(reservationId)
     ReservationService->>ReservationRepository: findById(reservationId)
@@ -114,19 +85,9 @@ console.log(\`Current stock: \${stock?.quantity}\`);`}
       </Card>
 
       {/* Inventory Transaction Flow */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <ArrowUpDown className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Inventory Transaction Flow</CardTitle>
-              <CardDescription>
-                How inventory transactions update stock levels
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Inventory Transaction Flow</CardTitle>
         </CardHeader>
         <CardContent>
           <MermaidDiagram
@@ -147,7 +108,7 @@ console.log(\`Current stock: \${stock?.quantity}\`);`}
     TransactionService->>Database: INSERT transaction record
     Database-->>TransactionService: Transaction saved
     TransactionService-->>User: Transaction created
-    
+
     Note over User,Database: Shipment Transaction
     User->>TransactionService: createTransaction(SHIPMENT, qty: 30)
     TransactionService->>StockService: getStock(productId, warehouseId)
@@ -171,26 +132,14 @@ console.log(\`Current stock: \${stock?.quantity}\`);`}
         <h2 className="text-2xl font-semibold tracking-tight">Stock Operations</h2>
         <Tabs defaultValue="adjust" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="adjust" className="flex items-center gap-2">
-              <ArrowUpDown className="h-4 w-4" />
-              <span className="hidden sm:inline">Adjust</span>
-            </TabsTrigger>
-            <TabsTrigger value="total" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              <span className="hidden sm:inline">Total</span>
-            </TabsTrigger>
-            <TabsTrigger value="transactions" className="flex items-center gap-2">
-              <List className="h-4 w-4" />
-              <span className="hidden sm:inline">Transactions</span>
-            </TabsTrigger>
+            <TabsTrigger value="adjust">Adjust</TabsTrigger>
+            <TabsTrigger value="total">Total</TabsTrigger>
+            <TabsTrigger value="transactions">Transactions</TabsTrigger>
           </TabsList>
           <TabsContent value="adjust" className="space-y-4 mt-6">
             <Card>
               <CardHeader>
                 <CardTitle>Adjust Stock</CardTitle>
-                <CardDescription>
-                  Increase or decrease stock levels
-                </CardDescription>
               </CardHeader>
               <CardContent>
                 <CodeBlock
@@ -210,9 +159,6 @@ const totalStock = await stockService.getTotalStock(product.id);`}
             <Card>
               <CardHeader>
                 <CardTitle>Total Stock</CardTitle>
-                <CardDescription>
-                  Get stock information across warehouses
-                </CardDescription>
               </CardHeader>
               <CardContent>
                 <CodeBlock
@@ -232,9 +178,6 @@ const warehouseStock = await stockService.getStockByWarehouse(warehouse.id);`}
             <Card>
               <CardHeader>
                 <CardTitle>Inventory Transactions</CardTitle>
-                <CardDescription>
-                  Track all inventory movements
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <MermaidDiagram
@@ -255,7 +198,7 @@ const warehouseStock = await stockService.getStockByWarehouse(warehouse.id);`}
     TransactionService->>Database: INSERT transaction record
     Database-->>TransactionService: Transaction saved
     TransactionService-->>User: Transaction created
-    
+
     Note over User,Database: Shipment Transaction
     User->>TransactionService: createTransaction(SHIPMENT, qty: 30)
     TransactionService->>StockService: getStock(productId, warehouseId)

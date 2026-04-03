@@ -1,42 +1,23 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { CodeBlock } from "@/components/code-block";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  FolderTree,
-  Plus,
-  Search,
-  List,
-  Edit,
-  Power,
-  AlertCircle,
-  Info,
-  Package,
-} from "lucide-react";
+import { AlertCircle, Info } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function CategoriesPage() {
   return (
     <div className="space-y-12">
-      {/* Hero Section */}
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <FolderTree className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">Categories</h1>
-            <p className="text-xl text-muted-foreground">
-              Organize your products with categories. Every product must belong
-              to a category.
-            </p>
-          </div>
-        </div>
+        <h1 className="text-4xl font-bold tracking-tight">Categories</h1>
+        <p className="text-xl text-muted-foreground">
+          Organize your products with categories. Every product must belong to a
+          category.
+        </p>
       </div>
 
       {/* Important Notes */}
@@ -51,19 +32,9 @@ export default function CategoriesPage() {
       </Alert>
 
       {/* Category Model */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <FolderTree className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Category Model</CardTitle>
-              <CardDescription>
-                Structure and properties of a Category
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Category Model</CardTitle>
         </CardHeader>
         <CardContent>
           <CodeBlock
@@ -78,19 +49,9 @@ export default function CategoriesPage() {
       </Card>
 
       {/* Create Category */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Plus className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Create Category</CardTitle>
-              <CardDescription>
-                Create a new category with optional description
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Create Category</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -151,30 +112,15 @@ console.log(category.isActive);   // true (default)`}
         </h2>
         <Tabs defaultValue="get" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="get" className="flex items-center gap-2">
-              <Search className="h-4 w-4" />
-              <span className="hidden sm:inline">Get</span>
-            </TabsTrigger>
-            <TabsTrigger value="list" className="flex items-center gap-2">
-              <List className="h-4 w-4" />
-              <span className="hidden sm:inline">List</span>
-            </TabsTrigger>
-            <TabsTrigger value="update" className="flex items-center gap-2">
-              <Edit className="h-4 w-4" />
-              <span className="hidden sm:inline">Update</span>
-            </TabsTrigger>
-            <TabsTrigger value="activate" className="flex items-center gap-2">
-              <Power className="h-4 w-4" />
-              <span className="hidden sm:inline">Status</span>
-            </TabsTrigger>
+            <TabsTrigger value="get">Get</TabsTrigger>
+            <TabsTrigger value="list">List</TabsTrigger>
+            <TabsTrigger value="update">Update</TabsTrigger>
+            <TabsTrigger value="activate">Status</TabsTrigger>
           </TabsList>
           <TabsContent value="get" className="space-y-4 mt-6">
             <Card>
               <CardHeader>
                 <CardTitle>Get Category</CardTitle>
-                <CardDescription>
-                  Retrieve categories by ID or name
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -228,9 +174,6 @@ try {
             <Card>
               <CardHeader>
                 <CardTitle>List Categories</CardTitle>
-                <CardDescription>
-                  Get all categories or filter by active status
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -286,10 +229,6 @@ console.log(active[0].name); // "Electronics"`}
             <Card>
               <CardHeader>
                 <CardTitle>Update Category</CardTitle>
-                <CardDescription>
-                  Modify category name or description (partial updates
-                  supported)
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -371,10 +310,6 @@ try {
             <Card>
               <CardHeader>
                 <CardTitle>Activate / Deactivate</CardTitle>
-                <CardDescription>
-                  Control category visibility and availability. Inactive
-                  categories are excluded from getAllCategories(true).
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -430,19 +365,9 @@ console.log(reactivated.isActive); // true`}
       </div>
 
       {/* Complete Example */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Package className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Complete Example</CardTitle>
-              <CardDescription>
-                Full workflow: Creating categories and using them with products
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Complete Example</CardTitle>
         </CardHeader>
         <CardContent>
           <CodeBlock
@@ -495,19 +420,9 @@ console.log(foundCategory.id === electronics.id); // true`}
       </Card>
 
       {/* Best Practices */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Info className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Best Practices</CardTitle>
-              <CardDescription>
-                Important guidelines for working with categories
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Best Practices</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>

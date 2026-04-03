@@ -1,41 +1,21 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CodeBlock } from "@/components/code-block"
 import { Separator } from "@/components/ui/separator"
 import { MermaidDiagram } from "@/components/mermaid-diagram"
-import { Rocket, FolderTree, Package, Warehouse, ShoppingCart, CheckCircle2 } from "lucide-react"
 
 export default function QuickStartPage() {
   return (
     <div className="space-y-12">
-      {/* Hero Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Rocket className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">Quick Start</h1>
-            <p className="text-xl text-muted-foreground">
-              Get up and running with Commercio in minutes.
-            </p>
-          </div>
-        </div>
+      <div className="space-y-2">
+        <h1 className="text-4xl font-bold tracking-tight">Quick Start</h1>
+        <p className="text-xl text-muted-foreground">
+          Get up and running with Commercio in minutes.
+        </p>
       </div>
 
-      {/* Basic Setup */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <CheckCircle2 className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Basic Setup</CardTitle>
-              <CardDescription>
-                Initialize services and start using Commercio
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Basic Setup</CardTitle>
         </CardHeader>
         <CardContent>
           <CodeBlock
@@ -45,7 +25,8 @@ export default function QuickStartPage() {
 } from "commercio";
 
 // Initialize database connection
-initDatabase({
+await initDatabase({
+  dialect: "postgresql", // or "mysql", "sqlite"
   connectionString: process.env.DATABASE_URL,
   runMigrations: true,
 });
@@ -65,20 +46,9 @@ const {
         </CardContent>
       </Card>
 
-      {/* Quick Start Flow */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Rocket className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Quick Start Flow</CardTitle>
-              <CardDescription>
-                Visual overview of the setup process
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Workflow Overview</CardTitle>
         </CardHeader>
         <CardContent>
           <MermaidDiagram
@@ -90,7 +60,7 @@ const {
         C --> D["Create Warehouse"]
         D --> E["Set Stock"]
     end
-    
+
     subgraph row2[" "]
         direction LR
         F["Create Order"] --> G["Confirm Order"]
@@ -98,9 +68,9 @@ const {
         H --> I["Ship Order"]
         I --> J["Complete Order"]
     end
-    
+
     E --> F
-    
+
     style row1 fill:transparent,stroke:none
     style row2 fill:transparent,stroke:none`}
             title="Setup Process"
@@ -110,7 +80,6 @@ const {
 
       <Separator />
 
-      {/* Steps */}
       <div className="space-y-8">
         <div className="space-y-4">
           <div className="flex items-center gap-3">

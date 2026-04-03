@@ -2,28 +2,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CodeBlock } from "@/components/code-block"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MermaidDiagram } from "@/components/mermaid-diagram"
-import { ShoppingCart, Plus, X, RotateCcw, Search, ArrowRight, Info } from "lucide-react"
+import { Info } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export default function OrdersPage() {
   return (
     <div className="space-y-12">
-      {/* Hero Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <ShoppingCart className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">Orders</h1>
-            <p className="text-xl text-muted-foreground">
-              Complete order management workflow with status tracking.
-            </p>
-          </div>
-        </div>
+      <div className="space-y-2">
+        <h1 className="text-4xl font-bold tracking-tight">Orders</h1>
+        <p className="text-xl text-muted-foreground">
+          Complete order management workflow with status tracking.
+        </p>
       </div>
 
-      {/* Important Notes */}
       <Alert variant="info">
         <Info className="h-4 w-4" />
         <AlertTitle className="text-sm font-medium">Important</AlertTitle>
@@ -34,20 +25,12 @@ export default function OrdersPage() {
         </AlertDescription>
       </Alert>
 
-      {/* Order Workflow Diagram */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <ArrowRight className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Order Workflow</CardTitle>
-              <CardDescription>
-                Complete order lifecycle from creation to completion
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Order Workflow</CardTitle>
+          <CardDescription>
+            Complete order lifecycle from creation to completion
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <MermaidDiagram
@@ -60,24 +43,24 @@ export default function OrdersPage() {
 
     Customer->>OrderService: createOrder(items)
     OrderService-->>Customer: Order (CREATED)
-    
+
     Customer->>OrderService: confirmOrder(orderId, warehouseId)
     OrderService->>ReservationService: createReservation(product, qty)
     ReservationService->>StockService: checkAvailability()
     StockService-->>ReservationService: available
     ReservationService-->>OrderService: Reservation created
     OrderService-->>Customer: Order (CONFIRMED)
-    
+
     Customer->>OrderService: markOrderAsPaid(orderId)
     OrderService-->>Customer: Order (PAID)
-    
+
     Customer->>OrderService: shipOrder(orderId, warehouseId)
     OrderService->>ReservationService: consumeReservation()
     ReservationService->>StockService: decreaseStock()
     OrderService->>InventoryService: createTransaction(SHIPMENT)
     InventoryService-->>OrderService: Transaction created
     OrderService-->>Customer: Order (SHIPPED)
-    
+
     Customer->>OrderService: completeOrder(orderId)
     OrderService-->>Customer: Order (COMPLETED)`}
             title="Order Lifecycle"
@@ -85,8 +68,7 @@ export default function OrdersPage() {
         </CardContent>
       </Card>
 
-      {/* Order Workflow Code */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
           <CardTitle>Code Example</CardTitle>
           <CardDescription>
@@ -138,23 +120,13 @@ const completedOrder = await orderService.completeOrder(order.id);`}
         </CardContent>
       </Card>
 
-      {/* Order Operations */}
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold tracking-tight">Order Operations</h2>
         <Tabs defaultValue="cancel" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="cancel" className="flex items-center gap-2">
-              <X className="h-4 w-4" />
-              <span className="hidden sm:inline">Cancel</span>
-            </TabsTrigger>
-            <TabsTrigger value="return" className="flex items-center gap-2">
-              <RotateCcw className="h-4 w-4" />
-              <span className="hidden sm:inline">Return</span>
-            </TabsTrigger>
-            <TabsTrigger value="get" className="flex items-center gap-2">
-              <Search className="h-4 w-4" />
-              <span className="hidden sm:inline">Get Orders</span>
-            </TabsTrigger>
+            <TabsTrigger value="cancel">Cancel</TabsTrigger>
+            <TabsTrigger value="return">Return</TabsTrigger>
+            <TabsTrigger value="get">Get Orders</TabsTrigger>
           </TabsList>
           <TabsContent value="cancel" className="space-y-4 mt-6">
             <Card>

@@ -1,45 +1,23 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { CodeBlock } from "@/components/code-block";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Users,
-  Plus,
-  Search,
-  List,
-  Edit,
-  Power,
-  AlertCircle,
-  Info,
-  Package,
-  Tag,
-  ShoppingCart,
-  TrendingUp,
-} from "lucide-react";
+import { AlertCircle, Info } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function CustomersPage() {
   return (
     <div className="space-y-12">
-      {/* Hero Section */}
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Users className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">Customers</h1>
-            <p className="text-xl text-muted-foreground">
-              Manage your customers with complete contact information, credit
-              limits, payment terms, and order history tracking.
-            </p>
-          </div>
-        </div>
+        <h1 className="text-4xl font-bold tracking-tight">Customers</h1>
+        <p className="text-xl text-muted-foreground">
+          Manage your customers with complete contact information, credit
+          limits, payment terms, and order history tracking.
+        </p>
       </div>
 
       {/* Important Notes */}
@@ -54,19 +32,9 @@ export default function CustomersPage() {
       </Alert>
 
       {/* Customer Model */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Users className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Customer Model</CardTitle>
-              <CardDescription>
-                Structure and properties of a Customer
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Customer Model</CardTitle>
         </CardHeader>
         <CardContent>
           <CodeBlock
@@ -95,20 +63,9 @@ enum PaymentTerms {
       </Card>
 
       {/* Create Customer */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Plus className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Create Customer</CardTitle>
-              <CardDescription>
-                Create a new customer with address, contact, and payment
-                settings
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Create Customer</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -218,30 +175,15 @@ try {
         </h2>
         <Tabs defaultValue="get" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="get" className="flex items-center gap-2">
-              <Search className="h-4 w-4" />
-              <span className="hidden sm:inline">Get</span>
-            </TabsTrigger>
-            <TabsTrigger value="list" className="flex items-center gap-2">
-              <List className="h-4 w-4" />
-              <span className="hidden sm:inline">List</span>
-            </TabsTrigger>
-            <TabsTrigger value="update" className="flex items-center gap-2">
-              <Edit className="h-4 w-4" />
-              <span className="hidden sm:inline">Update</span>
-            </TabsTrigger>
-            <TabsTrigger value="activate" className="flex items-center gap-2">
-              <Power className="h-4 w-4" />
-              <span className="hidden sm:inline">Status</span>
-            </TabsTrigger>
+            <TabsTrigger value="get">Get</TabsTrigger>
+            <TabsTrigger value="list">List</TabsTrigger>
+            <TabsTrigger value="update">Update</TabsTrigger>
+            <TabsTrigger value="activate">Status</TabsTrigger>
           </TabsList>
           <TabsContent value="get" className="space-y-4 mt-6">
             <Card>
               <CardHeader>
                 <CardTitle>Get Customer</CardTitle>
-                <CardDescription>
-                  Retrieve customers by ID or email
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -296,9 +238,6 @@ try {
             <Card>
               <CardHeader>
                 <CardTitle>List Customers</CardTitle>
-                <CardDescription>
-                  Get all customers or filter by active status
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -334,9 +273,6 @@ activeCustomers.forEach((customer) => {
             <Card>
               <CardHeader>
                 <CardTitle>Update Customer</CardTitle>
-                <CardDescription>
-                  Modify customer details (partial updates supported)
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -438,9 +374,6 @@ try {
             <Card>
               <CardHeader>
                 <CardTitle>Activate / Deactivate</CardTitle>
-                <CardDescription>
-                  Control customer visibility and availability
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -472,19 +405,9 @@ console.log(activated.isActive); // true
       </div>
 
       {/* Order History */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <ShoppingCart className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Order History</CardTitle>
-              <CardDescription>
-                Retrieve and analyze customer order history
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Order History</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -537,19 +460,9 @@ console.log(\`Orders by status:\`, stats.ordersByStatus);
       </Card>
 
       {/* Customer Groups */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Tag className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Customer Groups</CardTitle>
-              <CardDescription>
-                Organize customers into groups with discount percentages
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Customer Groups</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -594,19 +507,9 @@ const group = await customerService.getCustomerGroupByName("VIP Customers");`}
       </Card>
 
       {/* Complete Example */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Package className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Complete Example</CardTitle>
-              <CardDescription>
-                Full workflow: Creating customers, groups, and tracking orders
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Complete Example</CardTitle>
         </CardHeader>
         <CardContent>
           <CodeBlock
@@ -682,19 +585,9 @@ await customerService.updateCustomer(customer.id, {
       </Card>
 
       {/* Best Practices */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Info className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Best Practices</CardTitle>
-              <CardDescription>
-                Important guidelines for working with customers
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Best Practices</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -816,4 +709,3 @@ console.log(\`Customer has \${completedOrders.length} completed orders\`);`}
     </div>
   );
 }
-

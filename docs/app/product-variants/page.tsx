@@ -8,16 +8,12 @@ import {
 import { CodeBlock } from "@/components/code-block";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Layers,
-  Plus,
   Search,
   List,
   Edit,
   Power,
   AlertCircle,
   Info,
-  Package,
-  Tag,
   Trash2,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -25,23 +21,15 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 export default function ProductVariantsPage() {
   return (
     <div className="space-y-12">
-      {/* Hero Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Layers className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">
-              Product Variants
-            </h1>
-            <p className="text-xl text-muted-foreground">
-              Create variations of products with different attributes like Size,
-              Color, Material, etc. Each variant has its own SKU and can be
-              managed independently.
-            </p>
-          </div>
-        </div>
+      <div className="space-y-2">
+        <h1 className="text-4xl font-bold tracking-tight">
+          Product Variants
+        </h1>
+        <p className="text-xl text-muted-foreground">
+          Create variations of products with different attributes like Size,
+          Color, Material, etc. Each variant has its own SKU and can be
+          managed independently.
+        </p>
       </div>
 
       {/* Important Notes */}
@@ -57,19 +45,12 @@ export default function ProductVariantsPage() {
       </Alert>
 
       {/* Product Variant Model */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Layers className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Product Variant Model</CardTitle>
-              <CardDescription>
-                Structure and properties of a Product Variant
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Product Variant Model</CardTitle>
+          <CardDescription>
+            Structure and properties of a Product Variant
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <CodeBlock
@@ -81,7 +62,7 @@ export default function ProductVariantsPage() {
   isActive: boolean;              // Active status (default: true)
   createdAt: Date;
   updatedAt: Date;
-  
+
   // Helper methods
   getDisplayName(): string;       // Returns "Size: L, Color: Red"
   matchesAttributes(attributes: Record<string, string>): boolean;
@@ -91,19 +72,12 @@ export default function ProductVariantsPage() {
       </Card>
 
       {/* Variant Attributes */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Tag className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Variant Attributes</CardTitle>
-              <CardDescription>
-                Create attribute types before creating variants
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Variant Attributes</CardTitle>
+          <CardDescription>
+            Create attribute types before creating variants
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -133,19 +107,12 @@ const sizeAttr = await variantAttributeService.getVariantAttributeByName("Size")
       </Card>
 
       {/* Create Product Variant */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Plus className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Create Product Variant</CardTitle>
-              <CardDescription>
-                Create a variant with attribute values and unique SKU
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Create Product Variant</CardTitle>
+          <CardDescription>
+            Create a variant with attribute values and unique SKU
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -560,19 +527,12 @@ await productVariantService.deleteProductVariant(variantId);
       </div>
 
       {/* Complete Example */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Package className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Complete Example</CardTitle>
-              <CardDescription>
-                Full workflow: Creating products with variants
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Complete Example</CardTitle>
+          <CardDescription>
+            Full workflow: Creating products with variants
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <CodeBlock
@@ -644,19 +604,12 @@ await productVariantService.deactivateProductVariant(redLarge!.id);`}
       </Card>
 
       {/* Best Practices */}
-      <Card className="border-2">
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Info className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Best Practices</CardTitle>
-              <CardDescription>
-                Important guidelines for working with product variants
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Best Practices</CardTitle>
+          <CardDescription>
+            Guidelines for working with product variants
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -764,4 +717,3 @@ await productVariantService.deleteProductVariant(variantId);
     </div>
   );
 }
-
