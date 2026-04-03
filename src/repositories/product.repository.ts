@@ -1,15 +1,13 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "../db/db";
 import { products } from "../db/schema/index";
+import { insertAndReturn, updateAndReturn } from "../db/helpers/returning";
 import { Product, ProductId } from "../modules/product/product.model";
 import { ProductMapper } from "../db/mappers/product.mapper";
 
 export class ProductRepository {
   async create(product: Product): Promise<Product> {
-    const [created] = await db
-      .insert(products)
-      .values(ProductMapper.toPersistence(product))
-      .returning();
+    const created = await insertAndReturn(db, products, ProductMapper.toPersistence(product));
 
     if (!created) {
       throw new Error("Failed to create product");
@@ -58,14 +56,7 @@ export class ProductRepository {
   }
 
   async update(product: Product): Promise<Product> {
-    const [updated] = await db
-      .update(products)
-      .set({
-        ...ProductMapper.toPersistence(product),
-        updatedAt: new Date(),
-      })
-      .where(eq(products.id, product.id))
-      .returning();
+    const updated = await updateAndReturn(db, products, { ...ProductMapper.toPersistence(product), updatedAt: new Date() }, eq(products.id, product.id));
 
     if (!updated) {
       throw new Error("Failed to update product");

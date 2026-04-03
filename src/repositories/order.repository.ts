@@ -7,39 +7,38 @@ import {
   OrderId,
   OrderStatus,
 } from "../modules/order/order.model";
+import { insertAndReturn, updateAndReturn } from "../db/helpers/returning";
+import { getDialect } from "../db/dialect";
 
 export class OrderRepository {
   async create(order: Order): Promise<Order> {
     // Use transaction to ensure atomicity
-    return await db.transaction(async (tx) => {
+    return await db.transaction(async (tx: any) => {
       // Create order
-      const [createdOrder] = await tx
-        .insert(orders)
-        .values({
-          id: order.id,
-          customerId: order.customerId,
-          status: order.status,
-          createdAt: order.createdAt,
-        })
-        .returning();
+      const createdOrder = await insertAndReturn(tx, orders, { id: order.id, customerId: order.customerId, status: order.status, createdAt: order.createdAt });
 
       if (!createdOrder) {
         throw new Error("Failed to create order");
       }
 
       // Create order items
-      const createdItems = await tx
-        .insert(orderItems)
-        .values(
-          order.items.map((item) => ({
-            id: item.id,
-            orderId: order.id,
-            productId: item.productId,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-          }))
-        )
-        .returning();
+      const itemValues = order.items.map((item) => ({
+        id: item.id,
+        orderId: order.id,
+        productId: item.productId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      }));
+
+      // For MySQL compatibility, insert and then select
+      const dialect = getDialect();
+      let createdItems;
+      if (dialect !== "mysql") {
+        createdItems = await tx.insert(orderItems).values(itemValues).returning();
+      } else {
+        await tx.insert(orderItems).values(itemValues);
+        createdItems = await tx.select().from(orderItems).where(eq(orderItems.orderId, order.id));
+      }
 
       return this.toDomain(createdOrder, createdItems);
     });
@@ -69,7 +68,7 @@ export class OrderRepository {
       .where(eq(orders.customerId, customerId));
 
     const ordersWithItems = await Promise.all(
-      orderResults.map(async (order) => {
+      orderResults.map(async (order: any) => {
         const items = await db
           .select()
           .from(orderItems)
@@ -82,14 +81,7 @@ export class OrderRepository {
   }
 
   async updateStatus(id: OrderId, status: OrderStatus): Promise<Order> {
-    const [updated] = await db
-      .update(orders)
-      .set({
-        status,
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, id))
-      .returning();
+    const updated = await updateAndReturn(db, orders, { status, updatedAt: new Date() }, eq(orders.id, id));
 
     if (!updated) {
       throw new Error("Failed to update order status");

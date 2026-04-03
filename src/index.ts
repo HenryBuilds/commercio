@@ -9,8 +9,14 @@ export {
   type DatabaseConfig,
 } from "./db/init";
 
+// Dialect
+export { type Dialect, getDialect } from "./db/dialect";
+
 // Database migrations
 export { runMigrations, runMigrationsWithDb } from "./db/migrate";
+
+// Helpers
+export { insertAndReturn, updateAndReturn } from "./db/helpers/returning";
 
 // Logger
 export { logger, createLogger } from "./utils/logger";

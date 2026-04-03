@@ -1,9 +1,8 @@
 import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
-// Default config points to PostgreSQL (backward compatible)
 export default defineConfig({
-  out: "./src/drizzle",
+  out: "./src/drizzle/pg",
   schema: "./src/db/schema/pg/index.ts",
   dialect: "postgresql",
   dbCredentials: {

@@ -1,16 +1,14 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "../db/db";
 import { productVariants } from "../db/schema/index";
+import { insertAndReturn, updateAndReturn } from "../db/helpers/returning";
 import { ProductVariant, ProductVariantId } from "../modules/product/product-variant.model";
 import { ProductVariantMapper } from "../db/mappers/product-variant.mapper";
 import { ProductId } from "../modules/product/product.model";
 
 export class ProductVariantRepository {
   async create(variant: ProductVariant): Promise<ProductVariant> {
-    const [created] = await db
-      .insert(productVariants)
-      .values(ProductVariantMapper.toPersistence(variant))
-      .returning();
+    const created = await insertAndReturn(db, productVariants, ProductVariantMapper.toPersistence(variant));
 
     if (!created) {
       throw new Error("Failed to create product variant");
@@ -67,14 +65,7 @@ export class ProductVariantRepository {
   }
 
   async update(variant: ProductVariant): Promise<ProductVariant> {
-    const [updated] = await db
-      .update(productVariants)
-      .set({
-        ...ProductVariantMapper.toPersistence(variant),
-        updatedAt: new Date(),
-      })
-      .where(eq(productVariants.id, variant.id))
-      .returning();
+    const updated = await updateAndReturn(db, productVariants, { ...ProductVariantMapper.toPersistence(variant), updatedAt: new Date() }, eq(productVariants.id, variant.id));
 
     if (!updated) {
       throw new Error("Failed to update product variant");

@@ -1,7 +1,7 @@
 {
   "name": "commercio",
-  "version": "1.7.0",
-  "description": "Ein modulares Warenwirtschaftssystem (ERP) für Node.js mit PostgreSQL und Drizzle ORM",
+  "version": "2.0.0",
+  "description": "A modular ERP system for Node.js with support for PostgreSQL, MySQL, and SQLite via Drizzle ORM",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
@@ -24,28 +24,50 @@
     "inventory",
     "commerce",
     "drizzle",
-    "postgresql"
+    "postgresql",
+    "mysql",
+    "sqlite"
   ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/bun": "latest",
     "@types/node": "^20.0.0",
     "@types/pg": "^8.16.0",
+    "@vitest/ui": "^1.0.0",
+    "better-sqlite3": "^12.8.0",
     "drizzle-kit": "^0.31.8",
+    "mysql2": "^3.20.0",
     "tsx": "^4.21.0",
     "typescript": "^5.0.0",
-    "vitest": "^1.0.0",
-    "@vitest/ui": "^1.0.0"
+    "vitest": "^1.0.0"
   },
   "peerDependencies": {
+    "better-sqlite3": "^11.0.0",
+    "mysql2": "^3.0.0",
+    "pg": "^8.0.0",
     "typescript": "^5"
+  },
+  "peerDependenciesMeta": {
+    "pg": {
+      "optional": true
+    },
+    "mysql2": {
+      "optional": true
+    },
+    "better-sqlite3": {
+      "optional": true
+    }
   },
   "scripts": {
     "build": "tsc && npm run copy:migrations",
     "copy:migrations": "node -e \"require('fs').cpSync('src/drizzle', 'dist/db/drizzle', {recursive: true, force: true})\"",
     "dev": "tsx watch src/index.ts",
     "db:generate": "drizzle-kit generate",
+    "db:generate:pg": "drizzle-kit generate --config=drizzle.pg.config.ts",
+    "db:generate:mysql": "drizzle-kit generate --config=drizzle.mysql.config.ts",
+    "db:generate:sqlite": "drizzle-kit generate --config=drizzle.sqlite.config.ts",
     "db:migrate": "drizzle-kit migrate",
     "db:migrate:manual": "tsx scripts/run-migration.ts",
     "db:studio": "drizzle-kit studio",
@@ -56,9 +78,9 @@
     "test:unit": "vitest run tests/unit"
   },
   "dependencies": {
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.4.0",
     "drizzle-orm": "^0.45.1",
-    "pg": "^8.16.3",
+    "pg": "^8.0.0",
     "pino": "^9.3.0",
     "pino-pretty": "^11.2.0"
   }

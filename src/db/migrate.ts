@@ -1,8 +1,6 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { migrate as drizzleMigrate } from "drizzle-orm/node-postgres/migrator";
-import { Pool } from "pg";
 import * as schema from "./schema/index";
 import { logger } from "../utils/logger";
+import { getDialect } from "./dialect";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -10,87 +8,118 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+function getMigrationsPath(dialect: string): string {
+  const subfolder = dialect === "postgresql" ? "pg" : dialect;
+
+  // Try package path first (production) - dist/db/drizzle/<dialect>
+  const paths = [
+    join(__dirname, "drizzle", subfolder),
+    join(__dirname, "../drizzle", subfolder),
+    join(__dirname, "../../src/drizzle", subfolder),
+    // Fallback: legacy flat structure for pg
+    join(__dirname, "drizzle"),
+    join(__dirname, "../drizzle"),
+    join(__dirname, "../../src/drizzle"),
+  ];
+
+  for (const p of paths) {
+    try {
+      readFileSync(join(p, "meta/_journal.json"), "utf-8");
+      return p;
+    } catch {
+      // try next
+    }
+  }
+
+  throw new Error(
+    `No migrations found for dialect "${dialect}". Searched: ${paths.join(", ")}`
+  );
+}
+
+async function getMigrator(dialect: string) {
+  switch (dialect) {
+    case "postgresql": {
+      const { migrate } = await import("drizzle-orm/node-postgres/migrator");
+      return migrate;
+    }
+    case "mysql": {
+      const { migrate } = await import("drizzle-orm/mysql2/migrator");
+      return migrate;
+    }
+    case "sqlite": {
+      const { migrate } = await import(
+        "drizzle-orm/better-sqlite3/migrator"
+      );
+      return migrate;
+    }
+    default:
+      throw new Error(`Unsupported dialect for migrations: ${dialect}`);
+  }
+}
+
 /**
- * Runs database migrations automatically
- * This function reads the migration files from the package and applies them
- *
- * @param connectionString PostgreSQL connection string
- * @throws Error if migrations fail
- *
- * @example
- * ```typescript
- * import { runMigrations } from "commercio";
- *
- * await runMigrations(process.env.DATABASE_URL);
- * ```
+ * Runs database migrations using a new connection
  */
 export async function runMigrations(connectionString: string): Promise<void> {
-  const pool = new Pool({
-    connectionString,
-  });
+  const dialect = getDialect();
 
-  const db = drizzle(pool, { schema });
+  let db: any;
+  let pool: any;
+
+  switch (dialect) {
+    case "postgresql": {
+      const { Pool } = await import("pg");
+      const { drizzle } = await import("drizzle-orm/node-postgres");
+      pool = new Pool({ connectionString });
+      db = drizzle(pool, { schema });
+      break;
+    }
+    case "mysql": {
+      const mysql2 = await import("mysql2/promise");
+      const { drizzle } = await import("drizzle-orm/mysql2");
+      pool = mysql2.createPool(connectionString);
+      db = drizzle(pool, { schema, mode: "default" });
+      break;
+    }
+    case "sqlite": {
+      const Database = (await import("better-sqlite3")).default;
+      const { drizzle } = await import("drizzle-orm/better-sqlite3");
+      pool = new Database(connectionString);
+      pool.pragma("foreign_keys = ON");
+      db = drizzle(pool, { schema });
+      break;
+    }
+  }
 
   try {
-    logger.info("Running database migrations...");
-
-    // Get the path to migrations folder
-    // In the package, migrations are at: dist/db/drizzle
-    // In development, they're at: src/drizzle
-    let migrationsPath: string;
-
-    try {
-      // Try package path first (production)
-      migrationsPath = join(__dirname, "../drizzle");
-      // Check if it exists by trying to read the meta file
-      readFileSync(join(migrationsPath, "meta/_journal.json"), "utf-8");
-    } catch {
-      // Fallback to source path (development)
-      migrationsPath = join(__dirname, "../../src/drizzle");
-    }
-
-    await drizzleMigrate(db, { migrationsFolder: migrationsPath });
-
+    logger.info({ dialect }, "Running database migrations...");
+    const migrationsPath = getMigrationsPath(dialect);
+    const migrate = await getMigrator(dialect);
+    await migrate(db, { migrationsFolder: migrationsPath });
     logger.info("Database migrations completed successfully");
   } catch (error) {
     logger.error({ error }, "Failed to run migrations");
     throw error;
   } finally {
-    await pool.end();
+    if (dialect === "sqlite" && typeof pool?.close === "function") {
+      pool.close();
+    } else if (typeof pool?.end === "function") {
+      await pool.end();
+    }
   }
 }
 
 /**
  * Runs migrations using the current database connection
- * Use this if you've already initialized the database connection
- *
- * @param db Drizzle database instance
- * @throws Error if migrations fail
  */
 export async function runMigrationsWithDb(db: any): Promise<void> {
+  const dialect = getDialect();
+
   try {
-    logger.info("Running database migrations...");
-
-    // Get the path to migrations folder
-    let migrationsPath: string;
-
-    try {
-      // Try package path first (production) - migrations are at dist/db/drizzle
-      migrationsPath = join(__dirname, "drizzle");
-      readFileSync(join(migrationsPath, "meta/_journal.json"), "utf-8");
-    } catch {
-      try {
-        // Try alternative package path
-        migrationsPath = join(__dirname, "../drizzle");
-        readFileSync(join(migrationsPath, "meta/_journal.json"), "utf-8");
-      } catch {
-        // Fallback to source path (development)
-        migrationsPath = join(__dirname, "../../src/drizzle");
-      }
-    }
-
-    await drizzleMigrate(db, { migrationsFolder: migrationsPath });
-
+    logger.info({ dialect }, "Running database migrations...");
+    const migrationsPath = getMigrationsPath(dialect);
+    const migrate = await getMigrator(dialect);
+    await migrate(db, { migrationsFolder: migrationsPath });
     logger.info("Database migrations completed successfully");
   } catch (error) {
     logger.error({ error }, "Failed to run migrations");

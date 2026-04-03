@@ -1,6 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "../db/db";
 import { stock } from "../db/schema/index";
+import { insertAndReturn, updateAndReturn } from "../db/helpers/returning";
 import { Stock } from "../modules/inventory/stock.model";
 import { ProductId } from "../modules/product/product.model";
 import { WarehouseId } from "../modules/warehouse/warehouse.model";
@@ -22,15 +23,11 @@ export class StockRepository {
       );
     } else {
       // Insert new entry
-      const [result] = await db
-        .insert(stock)
-        .values({
-          productId: stockItem.productId,
-          warehouseId: stockItem.warehouseId,
-          quantity: stockItem.quantity,
-          updatedAt: new Date(),
-        })
-        .returning();
+      const result = await insertAndReturn(
+        db, stock,
+        { productId: stockItem.productId, warehouseId: stockItem.warehouseId, quantity: stockItem.quantity, updatedAt: new Date() },
+        and(eq(stock.productId, stockItem.productId), eq(stock.warehouseId, stockItem.warehouseId))
+      );
 
       if (!result) {
         throw new Error("Failed to upsert stock");
@@ -61,7 +58,7 @@ export class StockRepository {
       .from(stock)
       .where(eq(stock.productId, productId));
 
-    return results.map((r) => this.toDomain(r));
+    return results.map((r: any) => this.toDomain(r));
   }
 
   async findByWarehouse(warehouseId: WarehouseId): Promise<Stock[]> {
@@ -70,7 +67,7 @@ export class StockRepository {
       .from(stock)
       .where(eq(stock.warehouseId, warehouseId));
 
-    return results.map((r) => this.toDomain(r));
+    return results.map((r: any) => this.toDomain(r));
   }
 
   async updateQuantity(
@@ -78,16 +75,11 @@ export class StockRepository {
     warehouseId: WarehouseId,
     quantity: number
   ): Promise<Stock> {
-    const [updated] = await db
-      .update(stock)
-      .set({
-        quantity,
-        updatedAt: new Date(),
-      })
-      .where(
-        and(eq(stock.productId, productId), eq(stock.warehouseId, warehouseId))
-      )
-      .returning();
+    const updated = await updateAndReturn(
+      db, stock,
+      { quantity, updatedAt: new Date() },
+      and(eq(stock.productId, productId), eq(stock.warehouseId, warehouseId))
+    );
 
     if (!updated) {
       throw new Error("Failed to update stock quantity");

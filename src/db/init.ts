@@ -1,20 +1,26 @@
-import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
-import { Pool, PoolConfig } from "pg";
 import * as schema from "./schema/index";
 import { logger } from "../utils/logger";
 import { runMigrationsWithDb } from "./migrate";
+import { setDialect, type Dialect } from "./dialect";
 
-let dbInstance: NodePgDatabase<typeof schema> | null = null;
-let poolInstance: Pool | null = null;
+let dbInstance: any = null;
+let poolInstance: any = null;
 
 export interface DatabaseConfig {
   /**
-   * PostgreSQL connection string
-   * Example: postgresql://user:password@localhost:5432/database
+   * Database dialect to use
+   * Default: "postgresql"
+   */
+  dialect?: Dialect;
+  /**
+   * Connection string
+   * PostgreSQL: postgresql://user:password@localhost:5432/database
+   * MySQL: mysql://user:password@localhost:3306/database
+   * SQLite: path to database file, or ":memory:" for in-memory
    */
   connectionString?: string;
   /**
-   * Alternative: Individual connection parameters
+   * Alternative: Individual connection parameters (PostgreSQL and MySQL only)
    */
   host?: string;
   port?: number;
@@ -22,12 +28,9 @@ export interface DatabaseConfig {
   user?: string;
   password?: string;
   /**
-   * Additional Pool configuration options
+   * Additional pool configuration (PostgreSQL and MySQL only)
    */
-  poolConfig?: Omit<
-    PoolConfig,
-    "connectionString" | "host" | "port" | "database" | "user" | "password"
-  >;
+  poolConfig?: Record<string, any>;
   /**
    * Automatically run migrations after initialization
    * Default: false
@@ -35,45 +38,11 @@ export interface DatabaseConfig {
   runMigrations?: boolean;
 }
 
-/**
- * Initializes the database connection
- * Must be called before using any repositories or services
- *
- * @param config Database configuration (connection string or individual parameters)
- * @throws Error if configuration is invalid
- *
- * @example
- * ```typescript
- * import { initDatabase } from 'commercio';
- *
- * // Using connection string
- * initDatabase({
- *   connectionString: process.env.DATABASE_URL
- * });
- *
- * // Using individual parameters
- * initDatabase({
- *   host: 'localhost',
- *   port: 5432,
- *   database: 'my_database',
- *   user: 'postgres',
- *   password: 'password'
- * });
- * ```
- */
-export function initDatabase(config: DatabaseConfig): void {
-  if (dbInstance) {
-    logger.warn("Database already initialized. Reinitializing...");
-    // Close existing pool
-    if (poolInstance) {
-      poolInstance.end().catch((error) => {
-        logger.error({ error }, "Failed to close existing database pool");
-      });
-    }
-  }
+async function createPostgresConnection(config: DatabaseConfig) {
+  const { Pool } = await import("pg");
+  const { drizzle } = await import("drizzle-orm/node-postgres");
 
   let connectionString: string;
-
   if (config.connectionString) {
     connectionString = config.connectionString;
   } else if (config.host && config.database && config.user && config.password) {
@@ -81,30 +50,97 @@ export function initDatabase(config: DatabaseConfig): void {
     connectionString = `postgresql://${config.user}:${config.password}@${config.host}:${port}/${config.database}`;
   } else {
     throw new Error(
-      "Database configuration is invalid. Provide either 'connectionString' or all of: 'host', 'database', 'user', 'password'"
+      "PostgreSQL: Provide either 'connectionString' or all of: 'host', 'database', 'user', 'password'"
     );
   }
 
-  // Create connection pool
-  // For tests, use a smaller pool to reduce connection isolation issues
-  const isTest = process.env.NODE_ENV === "test" || process.env.VITEST === "true";
-  poolInstance = new Pool({
+  const isTest =
+    process.env.NODE_ENV === "test" || process.env.VITEST === "true";
+  const pool = new Pool({
     connectionString,
-    // Use smaller pool for tests to reduce connection isolation issues
     max: isTest ? 1 : undefined,
     min: isTest ? 1 : undefined,
     ...config.poolConfig,
   });
 
-  // Create drizzle instance with schema
-  dbInstance = drizzle(poolInstance, { schema });
+  const db = drizzle(pool, { schema });
+  return { db, pool };
+}
 
-  logger.info("Database connection initialized successfully");
+async function createMysqlConnection(config: DatabaseConfig) {
+  const mysql2 = await import("mysql2/promise");
+  const { drizzle } = await import("drizzle-orm/mysql2");
 
-  // Run migrations if requested
+  let connectionString: string;
+  if (config.connectionString) {
+    connectionString = config.connectionString;
+  } else if (config.host && config.database && config.user && config.password) {
+    const port = config.port || 3306;
+    connectionString = `mysql://${config.user}:${config.password}@${config.host}:${port}/${config.database}`;
+  } else {
+    throw new Error(
+      "MySQL: Provide either 'connectionString' or all of: 'host', 'database', 'user', 'password'"
+    );
+  }
+
+  const pool = mysql2.createPool(connectionString);
+  const db = drizzle(pool, { schema, mode: "default" });
+  return { db, pool };
+}
+
+async function createSqliteConnection(config: DatabaseConfig) {
+  const Database = (await import("better-sqlite3")).default;
+  const { drizzle } = await import("drizzle-orm/better-sqlite3");
+
+  const filename = config.connectionString || config.database || ":memory:";
+  const sqlite = new Database(filename);
+
+  // Enable WAL mode for better concurrency
+  sqlite.pragma("journal_mode = WAL");
+  sqlite.pragma("foreign_keys = ON");
+
+  const db = drizzle(sqlite, { schema });
+  return { db, pool: sqlite };
+}
+
+/**
+ * Initializes the database connection
+ * Must be called before using any repositories or services
+ */
+export async function initDatabase(config: DatabaseConfig): Promise<void> {
+  const dialect = config.dialect || "postgresql";
+
+  if (dbInstance) {
+    logger.warn("Database already initialized. Reinitializing...");
+    await closeDatabase();
+  }
+
+  // Set dialect BEFORE creating connection so schema proxies resolve correctly
+  setDialect(dialect);
+
+  let connection: { db: any; pool: any };
+
+  switch (dialect) {
+    case "postgresql":
+      connection = await createPostgresConnection(config);
+      break;
+    case "mysql":
+      connection = await createMysqlConnection(config);
+      break;
+    case "sqlite":
+      connection = await createSqliteConnection(config);
+      break;
+    default:
+      throw new Error(`Unsupported dialect: ${dialect}`);
+  }
+
+  dbInstance = connection.db;
+  poolInstance = connection.pool;
+
+  logger.info({ dialect }, "Database connection initialized successfully");
+
   if (config.runMigrations) {
-    // Run migrations asynchronously to not block initialization
-    runMigrationsWithDb(dbInstance as any).catch((error) => {
+    await runMigrationsWithDb(dbInstance).catch((error) => {
       logger.error({ error }, "Failed to run migrations during initialization");
       throw error;
     });
@@ -125,12 +161,18 @@ export function getDb() {
 }
 
 /**
- * Closes the database connection pool
- * Useful for graceful shutdown
+ * Closes the database connection
  */
 export async function closeDatabase(): Promise<void> {
   if (poolInstance) {
-    await poolInstance.end();
+    // PostgreSQL Pool
+    if (typeof poolInstance.end === "function") {
+      await poolInstance.end();
+    }
+    // better-sqlite3
+    if (typeof poolInstance.close === "function") {
+      poolInstance.close();
+    }
     poolInstance = null;
     dbInstance = null;
   }

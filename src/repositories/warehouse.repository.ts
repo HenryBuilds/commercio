@@ -1,19 +1,12 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/db";
 import { warehouses } from "../db/schema/index";
+import { insertAndReturn, updateAndReturn } from "../db/helpers/returning";
 import { Warehouse, WarehouseId } from "../modules/warehouse/warehouse.model";
 
 export class WarehouseRepository {
   async create(warehouse: Warehouse): Promise<Warehouse> {
-    const [created] = await db
-      .insert(warehouses)
-      .values({
-        id: warehouse.id,
-        name: warehouse.name,
-        shippingEnabled: warehouse.shippingEnabled,
-        isActive: warehouse.isActive,
-      })
-      .returning();
+    const created = await insertAndReturn(db, warehouses, { id: warehouse.id, name: warehouse.name, shippingEnabled: warehouse.shippingEnabled, isActive: warehouse.isActive });
 
     if (!created) {
       throw new Error("Failed to create warehouse");
@@ -40,20 +33,11 @@ export class WarehouseRepository {
     }
 
     const results = await query;
-    return results.map((r) => this.toDomain(r));
+    return results.map((r: any) => this.toDomain(r));
   }
 
   async update(warehouse: Warehouse): Promise<Warehouse> {
-    const [updated] = await db
-      .update(warehouses)
-      .set({
-        name: warehouse.name,
-        shippingEnabled: warehouse.shippingEnabled,
-        isActive: warehouse.isActive,
-        updatedAt: new Date(),
-      })
-      .where(eq(warehouses.id, warehouse.id))
-      .returning();
+    const updated = await updateAndReturn(db, warehouses, { name: warehouse.name, shippingEnabled: warehouse.shippingEnabled, isActive: warehouse.isActive, updatedAt: new Date() }, eq(warehouses.id, warehouse.id));
 
     if (!updated) {
       throw new Error("Failed to update warehouse");

@@ -1,56 +1,59 @@
 import "dotenv/config";
-import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
 import * as schema from "./schema/index";
-import { getDb as getDbInstance, initDatabase, type DatabaseConfig } from "./init";
+import {
+  getDb as getDbInstance,
+  initDatabase,
+  closeDatabase,
+  isDatabaseInitialized,
+  type DatabaseConfig,
+} from "./init";
+import { setDialect } from "./dialect";
 
 // Auto-initialize if DATABASE_URL is available (for backward compatibility)
 let autoInitialized = false;
-let dbInstance: NodePgDatabase<typeof schema> | null = null;
-let poolInstance: Pool | null = null;
+let dbInstance: any = null;
 
-// Try to auto-initialize from environment variable
-// Delay initialization for tests to ensure environment variables are set
-if (process.env.DATABASE_URL && !(process.env.NODE_ENV === "test" || process.env.VITEST === "true")) {
-  poolInstance = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    max: 10,
-    min: 2,
-  });
-  dbInstance = drizzle(poolInstance, { schema });
-  autoInitialized = true;
+// Try to auto-initialize from environment variable (PostgreSQL only, for backward compat)
+if (
+  process.env.DATABASE_URL &&
+  !(process.env.NODE_ENV === "test" || process.env.VITEST === "true")
+) {
+  // Defer to async init - set a flag so getDb() can lazy-init
+  const url = process.env.DATABASE_URL;
+
+  // Detect dialect from URL scheme
+  let detectedDialect: "postgresql" | "mysql" | "sqlite" = "postgresql";
+  if (url.startsWith("mysql://")) {
+    detectedDialect = "mysql";
+  } else if (
+    !url.startsWith("postgresql://") &&
+    !url.startsWith("postgres://")
+  ) {
+    // If it's a file path or :memory:, assume SQLite
+    detectedDialect = "sqlite";
+  }
+
+  setDialect(detectedDialect);
+
+  // Auto-init is now async, so we'll lazy-init on first getDb() call
+  initDatabase({ dialect: detectedDialect, connectionString: url })
+    .then(() => {
+      autoInitialized = true;
+    })
+    .catch(() => {
+      // Silently fail - user can call initDatabase() explicitly
+    });
 }
 
 /**
  * Gets the database instance
  * Auto-initializes from DATABASE_URL if available, otherwise uses initDatabase()
  */
-function getDb(): NodePgDatabase<typeof schema> {
-  // For tests, initialize lazily to ensure environment variables are set
-  const isTest = process.env.NODE_ENV === "test" || process.env.VITEST === "true";
-  if (isTest && !autoInitialized && process.env.DATABASE_URL) {
-    poolInstance = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      // Use single connection for tests to avoid isolation issues
-      max: 1,
-      min: 1,
-      // Ensure immediate visibility of committed data
-      idleTimeoutMillis: 0,
-      connectionTimeoutMillis: 5000,
-      // Use proper timeout for test queries
-      statement_timeout: 10000,
-    });
-    dbInstance = drizzle(poolInstance, { schema });
-    autoInitialized = true;
-  }
-  
-  if (autoInitialized && dbInstance) {
-    return dbInstance;
-  }
+function getDb(): any {
   // Try to get from init system
   try {
-    return getDbInstance() as unknown as NodePgDatabase<typeof schema>;
-  } catch (error) {
+    return getDbInstance();
+  } catch {
     throw new Error(
       "Database not initialized. Call initDatabase() first or set DATABASE_URL environment variable."
     );
@@ -58,8 +61,7 @@ function getDb(): NodePgDatabase<typeof schema> {
 }
 
 // Export db as a Proxy that forwards all calls to getDb()
-// This allows repositories to continue using `import { db } from "../db/db"`
-export const db = new Proxy({} as NodePgDatabase<typeof schema>, {
+export const db = new Proxy({} as any, {
   get(_target, prop) {
     const instance = getDb();
     const value = instance[prop as keyof typeof instance];
@@ -74,5 +76,9 @@ export const db = new Proxy({} as NodePgDatabase<typeof schema>, {
 export { schema };
 
 // Re-export initialization functions
-export { initDatabase, closeDatabase, isDatabaseInitialized, type DatabaseConfig } from "./init";
-
+export {
+  initDatabase,
+  closeDatabase,
+  isDatabaseInitialized,
+  type DatabaseConfig,
+} from "./init";

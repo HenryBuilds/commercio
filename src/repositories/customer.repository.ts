@@ -1,15 +1,13 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "../db/db";
 import { customers } from "../db/schema/index";
+import { insertAndReturn, updateAndReturn } from "../db/helpers/returning";
 import { Customer, CustomerId } from "../modules/customer/customer.model";
 import { CustomerMapper } from "../db/mappers/customer.mapper";
 
 export class CustomerRepository {
   async create(customer: Customer): Promise<Customer> {
-    const [created] = await db
-      .insert(customers)
-      .values(CustomerMapper.toPersistence(customer))
-      .returning();
+    const created = await insertAndReturn(db, customers, CustomerMapper.toPersistence(customer));
 
     if (!created) {
       throw new Error("Failed to create customer");
@@ -60,11 +58,7 @@ export class CustomerRepository {
   }
 
   async update(customer: Customer): Promise<Customer> {
-    const [updated] = await db
-      .update(customers)
-      .set(CustomerMapper.toPersistence(customer))
-      .where(eq(customers.id, customer.id))
-      .returning();
+    const updated = await updateAndReturn(db, customers, CustomerMapper.toPersistence(customer), eq(customers.id, customer.id));
 
     if (!updated) {
       throw new Error("Failed to update customer");

@@ -1,15 +1,13 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/db";
 import { categories } from "../db/schema/index";
+import { insertAndReturn, updateAndReturn } from "../db/helpers/returning";
 import { Category, CategoryId } from "../modules/category/category.model";
 import { CategoryMapper } from "../db/mappers/category.mapper";
 
 export class CategoryRepository {
   async create(category: Category): Promise<Category> {
-    const [created] = await db
-      .insert(categories)
-      .values(CategoryMapper.toPersistence(category))
-      .returning();
+    const created = await insertAndReturn(db, categories, CategoryMapper.toPersistence(category));
 
     if (!created) {
       throw new Error("Failed to create category");
@@ -52,11 +50,7 @@ export class CategoryRepository {
   }
 
   async update(category: Category): Promise<Category> {
-    const [updated] = await db
-      .update(categories)
-      .set(CategoryMapper.toPersistence(category))
-      .where(eq(categories.id, category.id))
-      .returning();
+    const updated = await updateAndReturn(db, categories, CategoryMapper.toPersistence(category), eq(categories.id, category.id));
 
     if (!updated) {
       throw new Error("Failed to update category");

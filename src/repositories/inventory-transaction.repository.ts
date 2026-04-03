@@ -1,6 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "../db/db";
 import { inventoryTransactions } from "../db/schema/index";
+import { insertAndReturn } from "../db/helpers/returning";
 import {
   InventoryTransaction,
   InventoryTransactionId,
@@ -12,18 +13,15 @@ export class InventoryTransactionRepository {
   async create(
     transaction: InventoryTransaction
   ): Promise<InventoryTransaction> {
-    const [created] = await db
-      .insert(inventoryTransactions)
-      .values({
-        id: transaction.id,
-        productId: transaction.productId,
-        warehouseId: transaction.warehouseId,
-        quantity: transaction.quantity,
-        type: transaction.type,
-        referenceId: transaction.referenceId,
-        createdAt: transaction.createdAt,
-      })
-      .returning();
+    const created = await insertAndReturn(db, inventoryTransactions, {
+      id: transaction.id,
+      productId: transaction.productId,
+      warehouseId: transaction.warehouseId,
+      quantity: transaction.quantity,
+      type: transaction.type,
+      referenceId: transaction.referenceId,
+      createdAt: transaction.createdAt,
+    });
 
     if (!created) {
       throw new Error("Failed to create inventory transaction");
@@ -50,7 +48,7 @@ export class InventoryTransactionRepository {
       .from(inventoryTransactions)
       .where(eq(inventoryTransactions.productId, productId));
 
-    return results.map((r) => this.toDomain(r));
+    return results.map((r: any) => this.toDomain(r));
   }
 
   async findByWarehouse(
@@ -61,7 +59,7 @@ export class InventoryTransactionRepository {
       .from(inventoryTransactions)
       .where(eq(inventoryTransactions.warehouseId, warehouseId));
 
-    return results.map((r) => this.toDomain(r));
+    return results.map((r: any) => this.toDomain(r));
   }
 
   async findByProductAndWarehouse(
@@ -78,7 +76,7 @@ export class InventoryTransactionRepository {
         )
       );
 
-    return results.map((r) => this.toDomain(r));
+    return results.map((r: any) => this.toDomain(r));
   }
 
   private toDomain(

@@ -3,13 +3,11 @@ import { db } from "../db/db";
 import { variantAttributes } from "../db/schema/index";
 import { VariantAttribute, VariantAttributeId } from "../modules/product/variant-attribute.model";
 import { VariantAttributeMapper } from "../db/mappers/variant-attribute.mapper";
+import { insertAndReturn, updateAndReturn } from "../db/helpers/returning";
 
 export class VariantAttributeRepository {
   async create(attribute: VariantAttribute): Promise<VariantAttribute> {
-    const [created] = await db
-      .insert(variantAttributes)
-      .values(VariantAttributeMapper.toPersistence(attribute))
-      .returning();
+    const created = await insertAndReturn(db, variantAttributes, VariantAttributeMapper.toPersistence(attribute));
 
     if (!created) {
       throw new Error("Failed to create variant attribute");
@@ -52,11 +50,7 @@ export class VariantAttributeRepository {
   }
 
   async update(attribute: VariantAttribute): Promise<VariantAttribute> {
-    const [updated] = await db
-      .update(variantAttributes)
-      .set(VariantAttributeMapper.toPersistence(attribute))
-      .where(eq(variantAttributes.id, attribute.id))
-      .returning();
+    const updated = await updateAndReturn(db, variantAttributes, VariantAttributeMapper.toPersistence(attribute), eq(variantAttributes.id, attribute.id));
 
     if (!updated) {
       throw new Error("Failed to update variant attribute");

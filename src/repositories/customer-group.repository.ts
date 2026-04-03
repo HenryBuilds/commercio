@@ -1,15 +1,13 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/db";
 import { customerGroups } from "../db/schema/index";
+import { insertAndReturn, updateAndReturn } from "../db/helpers/returning";
 import { CustomerGroup, CustomerGroupId } from "../modules/customer/customer.model";
 import { CustomerGroupMapper } from "../db/mappers/customer-group.mapper";
 
 export class CustomerGroupRepository {
   async create(group: CustomerGroup): Promise<CustomerGroup> {
-    const [created] = await db
-      .insert(customerGroups)
-      .values(CustomerGroupMapper.toPersistence(group))
-      .returning();
+    const created = await insertAndReturn(db, customerGroups, CustomerGroupMapper.toPersistence(group));
 
     if (!created) {
       throw new Error("Failed to create customer group");
@@ -52,11 +50,7 @@ export class CustomerGroupRepository {
   }
 
   async update(group: CustomerGroup): Promise<CustomerGroup> {
-    const [updated] = await db
-      .update(customerGroups)
-      .set(CustomerGroupMapper.toPersistence(group))
-      .where(eq(customerGroups.id, group.id))
-      .returning();
+    const updated = await updateAndReturn(db, customerGroups, CustomerGroupMapper.toPersistence(group), eq(customerGroups.id, group.id));
 
     if (!updated) {
       throw new Error("Failed to update customer group");

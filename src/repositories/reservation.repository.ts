@@ -1,6 +1,7 @@
 import { eq, and, lt } from "drizzle-orm";
 import { db } from "../db/db";
 import { reservations } from "../db/schema/index";
+import { insertAndReturn, updateAndReturn } from "../db/helpers/returning";
 import {
   Reservation,
   ReservationId,
@@ -11,18 +12,15 @@ import { WarehouseId } from "../modules/warehouse/warehouse.model";
 
 export class ReservationRepository {
   async create(reservation: Reservation): Promise<Reservation> {
-    const [created] = await db
-      .insert(reservations)
-      .values({
-        id: reservation.id,
-        productId: reservation.productId,
-        warehouseId: reservation.warehouseId,
-        quantity: reservation.quantity,
-        referenceId: reservation.referenceId,
-        status: reservation.status,
-        expiresAt: reservation.expiresAt,
-      })
-      .returning();
+    const created = await insertAndReturn(db, reservations, {
+      id: reservation.id,
+      productId: reservation.productId,
+      warehouseId: reservation.warehouseId,
+      quantity: reservation.quantity,
+      referenceId: reservation.referenceId,
+      status: reservation.status,
+      expiresAt: reservation.expiresAt,
+    });
 
     if (!created) {
       throw new Error("Failed to create reservation");
@@ -47,7 +45,7 @@ export class ReservationRepository {
       .from(reservations)
       .where(eq(reservations.referenceId, referenceId));
 
-    return results.map((r) => this.toDomain(r));
+    return results.map((r: any) => this.toDomain(r));
   }
 
   async findByProductAndWarehouse(
@@ -65,21 +63,14 @@ export class ReservationRepository {
         )
       );
 
-    return results.map((r) => this.toDomain(r));
+    return results.map((r: any) => this.toDomain(r));
   }
 
   async updateStatus(
     id: ReservationId,
     status: ReservationStatus
   ): Promise<Reservation> {
-    const [updated] = await db
-      .update(reservations)
-      .set({
-        status,
-        updatedAt: new Date(),
-      })
-      .where(eq(reservations.id, id))
-      .returning();
+    const updated = await updateAndReturn(db, reservations, { status, updatedAt: new Date() }, eq(reservations.id, id));
 
     if (!updated) {
       throw new Error("Failed to update reservation status");
@@ -99,7 +90,7 @@ export class ReservationRepository {
         )
       );
 
-    return results.map((r) => this.toDomain(r));
+    return results.map((r: any) => this.toDomain(r));
   }
 
   private toDomain(row: typeof reservations.$inferSelect): Reservation {
