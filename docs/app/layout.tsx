@@ -38,7 +38,7 @@ export default function RootLayout({
         >
           <div className="flex h-screen overflow-hidden">
             <Sidebar />
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 overflow-y-auto bg-[image:radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:32px_32px]">
               <div className="container mx-auto max-w-4xl px-6 py-12">
                 {children}
                 <PageNav />
