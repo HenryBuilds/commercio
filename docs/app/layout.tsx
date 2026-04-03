@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { PageNav } from "@/components/page-nav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
             <main className="flex-1 overflow-y-auto">
               <div className="container mx-auto max-w-4xl px-6 py-12">
                 {children}
+                <PageNav />
               </div>
             </main>
           </div>
