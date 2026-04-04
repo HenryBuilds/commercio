@@ -11,9 +11,17 @@ const pages = [
   { href: "/products", title: "Products" },
   { href: "/product-variants", title: "Product Variants" },
   { href: "/customers", title: "Customers" },
+  { href: "/addresses", title: "Addresses" },
   { href: "/warehouses", title: "Warehouses" },
   { href: "/inventory", title: "Inventory" },
   { href: "/orders", title: "Orders" },
+  { href: "/invoices", title: "Invoices" },
+  { href: "/payments", title: "Payments" },
+  { href: "/shipping", title: "Shipping" },
+  { href: "/pricing", title: "Pricing" },
+  { href: "/tax", title: "Tax" },
+  { href: "/suppliers", title: "Suppliers" },
+  { href: "/promotions", title: "Promotions" },
   { href: "/api", title: "API Reference" },
 ]
 
