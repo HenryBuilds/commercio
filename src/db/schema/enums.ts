@@ -29,3 +29,52 @@ export const paymentTermsEnum = pgEnum("payment_terms", [
   "PREPAID",
 ]);
 
+export const pricingStrategyEnum = pgEnum("pricing_strategy", [
+  "FIXED",
+  "TIERED",
+]);
+
+export const invoiceStatusEnum = pgEnum("invoice_status", [
+  "DRAFT",
+  "SENT",
+  "PAID",
+  "PARTIALLY_PAID",
+  "OVERDUE",
+  "CANCELLED",
+]);
+
+export const paymentMethodEnum = pgEnum("payment_method", [
+  "CASH",
+  "BANK_TRANSFER",
+  "CREDIT_CARD",
+  "DEBIT_CARD",
+  "PAYPAL",
+  "OTHER",
+]);
+
+export const paymentStatusEnum = pgEnum("payment_status", [
+  "PENDING",
+  "COMPLETED",
+  "FAILED",
+  "REFUNDED",
+  "PARTIALLY_REFUNDED",
+]);
+
+export const shipmentStatusEnum = pgEnum("shipment_status", [
+  "PENDING",
+  "PICKED_UP",
+  "IN_TRANSIT",
+  "DELIVERED",
+  "RETURNED",
+  "CANCELLED",
+]);
+
+export const purchaseOrderStatusEnum = pgEnum("purchase_order_status", [
+  "DRAFT",
+  "SUBMITTED",
+  "CONFIRMED",
+  "SHIPPED",
+  "RECEIVED",
+  "CANCELLED",
+]);
+

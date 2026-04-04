@@ -32,6 +32,14 @@ export * from "./modules/inventory/reservation.model";
 export * from "./modules/inventory/stock.model";
 export * from "./modules/order/order.model";
 export * from "./modules/customer/customer.model";
+export * from "./modules/pricing/pricing.model";
+export * from "./modules/tax/tax.model";
+export * from "./modules/invoice/invoice.model";
+export * from "./modules/payment/payment.model";
+export * from "./modules/shipping/shipping.model";
+export * from "./modules/supplier/supplier.model";
+export * from "./modules/address/address.model";
+export * from "./modules/promotion/promotion.model";
 
 // Repositories
 export { CategoryRepository } from "./repositories/category.repository";
@@ -45,6 +53,19 @@ export { VariantAttributeRepository } from "./repositories/variant-attribute.rep
 export { ProductVariantRepository } from "./repositories/product-variant.repository";
 export { CustomerRepository } from "./repositories/customer.repository";
 export { CustomerGroupRepository } from "./repositories/customer-group.repository";
+export { PriceListRepository } from "./repositories/price-list.repository";
+export { PriceEntryRepository } from "./repositories/price-entry.repository";
+export { TaxRateRepository } from "./repositories/tax-rate.repository";
+export { TaxGroupRepository } from "./repositories/tax-group.repository";
+export { InvoiceRepository } from "./repositories/invoice.repository";
+export { PaymentRepository } from "./repositories/payment.repository";
+export { ShippingMethodRepository } from "./repositories/shipping-method.repository";
+export { ShipmentRepository } from "./repositories/shipment.repository";
+export { SupplierRepository } from "./repositories/supplier.repository";
+export { PurchaseOrderRepository } from "./repositories/purchase-order.repository";
+export { AddressRepository } from "./repositories/address.repository";
+export { PromotionRepository } from "./repositories/promotion.repository";
+export { CouponRepository } from "./repositories/coupon.repository";
 
 // Services (business logic layer)
 export * from "./services/index";
