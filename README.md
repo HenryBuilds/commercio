@@ -10,11 +10,19 @@ A modular ERP (Enterprise Resource Planning) system for Node.js with PostgreSQL 
 - Variant attribute management
 - Customer management with address, contact details, credit limits, and payment terms
 - Customer groups with discount percentages
+- Address management (billing/shipping, multiple per customer)
 - Order history and statistics tracking
 - Warehouse management (multi-warehouse)
 - Inventory management with transaction history
 - Order management with status workflow
 - Stock reservation system
+- Pricing with price lists, customer-group pricing, and tiered/volume pricing
+- Tax management with rates, groups, and calculations
+- Invoice management with status workflow and partial payments
+- Payment tracking with multiple methods, refunds, and status management
+- Shipping with methods, shipments, and tracking
+- Supplier management with purchase orders
+- Promotions and coupon system with percentage/fixed discounts
 - TypeScript-first with full type safety
 - Structured logging with Pino
 
@@ -764,6 +772,134 @@ const productReservations = await reservationService.getReservationsByProduct(
 - `getReservationsByReference(referenceId: string): Promise<Reservation[]>`
 - `getReservationsByProduct(productId: ProductId): Promise<Reservation[]>`
 
+### PricingService
+
+- `createPriceList(name: string, options?: { currency?, customerGroupId?, priority?, validFrom?, validTo? }): Promise<PriceList>`
+- `getPriceListById(id: PriceListId): Promise<PriceList>`
+- `getPriceListByName(name: string): Promise<PriceList>`
+- `getAllPriceLists(activeOnly?: boolean): Promise<PriceList[]>`
+- `getPriceListsByCustomerGroup(customerGroupId: CustomerGroupId): Promise<PriceList[]>`
+- `updatePriceList(id: PriceListId, updates: Partial<{...}>): Promise<PriceList>`
+- `deactivatePriceList(id: PriceListId): Promise<PriceList>`
+- `activatePriceList(id: PriceListId): Promise<PriceList>`
+- `setPrice(priceListId: PriceListId, productId: ProductId, unitPrice: number, options?: { productVariantId? }): Promise<PriceEntry>`
+- `setTieredPrice(priceListId: PriceListId, productId: ProductId, tiers: { minQuantity, unitPrice }[], options?: { productVariantId? }): Promise<PriceEntry>`
+- `getPriceEntryById(id: PriceEntryId): Promise<PriceEntry>`
+- `getPriceEntriesByPriceList(priceListId: PriceListId): Promise<PriceEntry[]>`
+- `getPriceEntriesByProduct(productId: ProductId): Promise<PriceEntry[]>`
+- `getEffectivePrice(productId: ProductId, options?: { productVariantId?, customerGroupId?, quantity? }): Promise<{ unitPrice, priceListId } | null>`
+- `updatePriceEntry(id: PriceEntryId, updates: Partial<{...}>): Promise<PriceEntry>`
+- `deletePriceEntry(id: PriceEntryId): Promise<void>`
+
+### TaxService
+
+- `createTaxRate(name: string, rate: number, country: string, options?: { state?, isDefault? }): Promise<TaxRate>`
+- `getTaxRateById(id: TaxRateId): Promise<TaxRate>`
+- `getTaxRateByName(name: string): Promise<TaxRate>`
+- `getAllTaxRates(activeOnly?: boolean): Promise<TaxRate[]>`
+- `getTaxRatesByCountry(country: string): Promise<TaxRate[]>`
+- `getDefaultTaxRate(country: string): Promise<TaxRate | null>`
+- `updateTaxRate(id: TaxRateId, updates: Partial<{...}>): Promise<TaxRate>`
+- `deactivateTaxRate(id: TaxRateId): Promise<TaxRate>`
+- `activateTaxRate(id: TaxRateId): Promise<TaxRate>`
+- `calculateTax(taxRateId: TaxRateId, netAmount: number): Promise<{ netAmount, taxAmount, grossAmount, rate }>`
+- `createTaxGroup(name: string, description?: string): Promise<TaxGroup>`
+- `getTaxGroupById(id: TaxGroupId): Promise<TaxGroup>`
+- `getAllTaxGroups(activeOnly?: boolean): Promise<TaxGroup[]>`
+- `updateTaxGroup(id: TaxGroupId, updates: Partial<{...}>): Promise<TaxGroup>`
+- `deactivateTaxGroup(id: TaxGroupId): Promise<TaxGroup>`
+- `activateTaxGroup(id: TaxGroupId): Promise<TaxGroup>`
+
+### InvoiceService
+
+- `createInvoice(customerId: string, items: InvoiceItemInput[], dueDate: Date, options?: { orderId?, notes?, invoiceNumber? }): Promise<Invoice>`
+- `getInvoiceById(id: InvoiceId): Promise<Invoice>`
+- `getInvoiceByNumber(invoiceNumber: string): Promise<Invoice>`
+- `getInvoicesByCustomer(customerId: string): Promise<Invoice[]>`
+- `getInvoicesByOrder(orderId: string): Promise<Invoice[]>`
+- `sendInvoice(id: InvoiceId): Promise<Invoice>` (DRAFT -> SENT)
+- `recordPayment(id: InvoiceId, amount: number): Promise<Invoice>` (tracks partial/full payments)
+- `markAsOverdue(id: InvoiceId): Promise<Invoice>`
+- `cancelInvoice(id: InvoiceId): Promise<Invoice>`
+- `getAllInvoices(options?: { status? }): Promise<Invoice[]>`
+
+### PaymentService
+
+- `createPayment(orderId: string, customerId: string, amount: number, method: PaymentMethod, options?: { referenceNumber?, notes? }): Promise<Payment>`
+- `getPaymentById(id: PaymentId): Promise<Payment>`
+- `getPaymentsByOrder(orderId: string): Promise<Payment[]>`
+- `getPaymentsByCustomer(customerId: string): Promise<Payment[]>`
+- `completePayment(id: PaymentId): Promise<Payment>` (PENDING -> COMPLETED)
+- `failPayment(id: PaymentId): Promise<Payment>` (PENDING -> FAILED)
+- `refundPayment(id: PaymentId, amount?: number): Promise<Payment>` (full or partial refund)
+- `getAllPayments(options?: { status?, method? }): Promise<Payment[]>`
+
+### ShippingService
+
+- `createShippingMethod(name: string, carrier: string, baseCost: number, estimatedDays: number): Promise<ShippingMethod>`
+- `getShippingMethodById(id: ShippingMethodId): Promise<ShippingMethod>`
+- `getAllShippingMethods(activeOnly?: boolean): Promise<ShippingMethod[]>`
+- `updateShippingMethod(id: ShippingMethodId, updates: Partial<{...}>): Promise<ShippingMethod>`
+- `deactivateShippingMethod(id: ShippingMethodId): Promise<ShippingMethod>`
+- `activateShippingMethod(id: ShippingMethodId): Promise<ShippingMethod>`
+- `createShipment(orderId: string, shippingMethodId: string, shippingAddress: {...}, options?: { trackingNumber? }): Promise<Shipment>`
+- `getShipmentById(id: ShipmentId): Promise<Shipment>`
+- `getShipmentsByOrder(orderId: string): Promise<Shipment[]>`
+- `updateTrackingNumber(id: ShipmentId, trackingNumber: string): Promise<Shipment>`
+- `pickUpShipment(id: ShipmentId): Promise<Shipment>` (PENDING -> PICKED_UP)
+- `transitShipment(id: ShipmentId): Promise<Shipment>` (PICKED_UP -> IN_TRANSIT)
+- `deliverShipment(id: ShipmentId): Promise<Shipment>` (IN_TRANSIT -> DELIVERED)
+- `returnShipment(id: ShipmentId): Promise<Shipment>`
+- `cancelShipment(id: ShipmentId): Promise<Shipment>`
+
+### SupplierService
+
+- `createSupplier(name: string, options?: { contactName?, email?, phone?, street?, city?, postalCode?, country? }): Promise<Supplier>`
+- `getSupplierById(id: SupplierId): Promise<Supplier>`
+- `getSupplierByName(name: string): Promise<Supplier>`
+- `getAllSuppliers(activeOnly?: boolean): Promise<Supplier[]>`
+- `updateSupplier(id: SupplierId, updates: Partial<{...}>): Promise<Supplier>`
+- `deactivateSupplier(id: SupplierId): Promise<Supplier>`
+- `activateSupplier(id: SupplierId): Promise<Supplier>`
+- `createPurchaseOrder(supplierId: string, items: { productId, quantity, unitCost }[], options?: { expectedDelivery?, notes? }): Promise<PurchaseOrder>`
+- `getPurchaseOrderById(id: PurchaseOrderId): Promise<PurchaseOrder>`
+- `getPurchaseOrdersBySupplier(supplierId: string): Promise<PurchaseOrder[]>`
+- `submitPurchaseOrder(id: PurchaseOrderId): Promise<PurchaseOrder>` (DRAFT -> SUBMITTED)
+- `confirmPurchaseOrder(id: PurchaseOrderId): Promise<PurchaseOrder>` (SUBMITTED -> CONFIRMED)
+- `shipPurchaseOrder(id: PurchaseOrderId): Promise<PurchaseOrder>` (CONFIRMED -> SHIPPED)
+- `receivePurchaseOrder(id: PurchaseOrderId): Promise<PurchaseOrder>` (SHIPPED -> RECEIVED)
+- `cancelPurchaseOrder(id: PurchaseOrderId): Promise<PurchaseOrder>`
+
+### AddressService
+
+- `createAddress(customerId: string, type: AddressType, street: string, city: string, postalCode: string, country: string, options?: { label?, state?, isDefault? }): Promise<Address>`
+- `getAddressById(id: AddressId): Promise<Address>`
+- `getAddressesByCustomer(customerId: string): Promise<Address[]>`
+- `getAddressesByType(customerId: string, type: AddressType): Promise<Address[]>`
+- `getDefaultAddress(customerId: string, type: AddressType): Promise<Address | null>`
+- `setDefaultAddress(id: AddressId): Promise<Address>`
+- `updateAddress(id: AddressId, updates: Partial<{...}>): Promise<Address>`
+- `deactivateAddress(id: AddressId): Promise<Address>`
+- `activateAddress(id: AddressId): Promise<Address>`
+
+### PromotionService
+
+- `createPromotion(name: string, discountType: DiscountType, discountValue: number, validFrom: Date, validTo: Date, options?: { description?, minOrderAmount?, maxDiscountAmount? }): Promise<Promotion>`
+- `getPromotionById(id: PromotionId): Promise<Promotion>`
+- `getPromotionByName(name: string): Promise<Promotion>`
+- `getAllPromotions(activeOnly?: boolean): Promise<Promotion[]>`
+- `getValidPromotions(): Promise<Promotion[]>`
+- `updatePromotion(id: PromotionId, updates: Partial<{...}>): Promise<Promotion>`
+- `deactivatePromotion(id: PromotionId): Promise<Promotion>`
+- `activatePromotion(id: PromotionId): Promise<Promotion>`
+- `createCoupon(code: string, promotionId: PromotionId, options?: { maxUses? }): Promise<Coupon>`
+- `getCouponById(id: CouponId): Promise<Coupon>`
+- `getCouponByCode(code: string): Promise<Coupon>`
+- `getCouponsByPromotion(promotionId: PromotionId): Promise<Coupon[]>`
+- `applyCoupon(code: string, orderAmount: number): Promise<{ discount, promotionId, couponId }>`
+- `deactivateCoupon(id: CouponId): Promise<Coupon>`
+- `activateCoupon(id: CouponId): Promise<Coupon>`
+
 ## Database Schema
 
 The package uses the following tables:
@@ -774,24 +910,27 @@ The package uses the following tables:
 - `product_variants` - Product variants with attribute values
 - `customer_groups` - Customer groups with discount percentages
 - `customers` - Customers with address, contact, credit limit, and payment terms
+- `addresses` - Multiple billing/shipping addresses per customer
 - `warehouses` - Warehouses
 - `stock` - Stock levels (Product × Warehouse)
 - `inventory_transactions` - Inventory transactions
 - `reservations` - Stock reservations
 - `orders` - Orders (references customers)
 - `order_items` - Order items
-
-**Relationships:**
-
-- Products must belong to a category (`products.category_id` → `categories.id`)
-- Product variants belong to products (`product_variants.product_id` → `products.id`)
-- Variants store attribute values as JSON (e.g., `{ "Size": "L", "Color": "Red" }`)
-- Customers can belong to a customer group (`customers.customer_group_id` → `customer_groups.id`)
-- Orders belong to customers (`orders.customer_id` → `customers.id`)
-- Stock entries reference products and warehouses
-- Orders contain order items that reference products
-- Reservations reference products and warehouses
-- Inventory transactions reference products and warehouses
+- `price_lists` - Price lists with currency, validity, and customer group targeting
+- `price_entries` - Price entries with fixed or tiered pricing strategies
+- `tax_rates` - Tax rates per country/state
+- `tax_groups` - Tax groups for product classification
+- `invoices` - Invoices with status workflow
+- `invoice_items` - Invoice line items with tax
+- `payments` - Payment records with method and status tracking
+- `shipping_methods` - Shipping carriers and methods
+- `shipments` - Shipment tracking with status workflow
+- `suppliers` - Supplier management
+- `purchase_orders` - Purchase orders from suppliers
+- `purchase_order_items` - Purchase order line items
+- `promotions` - Discount promotions with validity periods
+- `coupons` - Coupon codes linked to promotions
 
 ## Logging
 
