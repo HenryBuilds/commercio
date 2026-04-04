@@ -1,13 +1,8 @@
 import { pgTable, text, integer, boolean, timestamp, uuid, jsonb } from "drizzle-orm/pg-core";
-import { pgEnum } from "drizzle-orm/pg-core";
 import { products } from "./products";
 import { productVariants } from "./product-variants";
 import { customerGroups } from "./customer-groups";
-
-export const pricingStrategyEnum = pgEnum("pricing_strategy", [
-  "FIXED",
-  "TIERED",
-]);
+import { pricingStrategyEnum } from "./enums";
 
 export const priceLists = pgTable("price_lists", {
   id: uuid("id").primaryKey().defaultRandom(),

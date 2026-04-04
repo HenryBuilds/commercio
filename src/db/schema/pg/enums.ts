@@ -77,3 +77,14 @@ export const purchaseOrderStatusEnum = pgEnum("purchase_order_status", [
   "RECEIVED",
   "CANCELLED",
 ]);
+
+export const addressTypeEnum = pgEnum("address_type", [
+  "BILLING",
+  "SHIPPING",
+  "BOTH",
+]);
+
+export const discountTypeEnum = pgEnum("discount_type", [
+  "PERCENTAGE",
+  "FIXED_AMOUNT",
+]);

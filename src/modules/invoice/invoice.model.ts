@@ -1,10 +1,10 @@
 import type { ProductId } from "../product/product.model";
 import type { CustomerId } from "../customer/customer.model";
 import type { OrderId } from "../order/order.model";
+import type { TaxRateId } from "../tax/tax.model";
 
 export type InvoiceId = string;
 export type InvoiceItemId = string;
-export type TaxRateId = string;
 
 export enum InvoiceStatus {
   DRAFT = "DRAFT",

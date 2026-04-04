@@ -1,7 +1,5 @@
 import { pgTable, text, integer, boolean, timestamp, uuid } from "drizzle-orm/pg-core";
-import { pgEnum } from "drizzle-orm/pg-core";
-
-export const discountTypeEnum = pgEnum("discount_type", ["PERCENTAGE", "FIXED_AMOUNT"]);
+import { discountTypeEnum } from "./enums";
 
 export const promotions = pgTable("promotions", {
   id: uuid("id").primaryKey().defaultRandom(),

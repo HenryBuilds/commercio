@@ -1,8 +1,6 @@
 import { pgTable, text, boolean, timestamp, uuid } from "drizzle-orm/pg-core";
-import { pgEnum } from "drizzle-orm/pg-core";
 import { customers } from "./customers";
-
-export const addressTypeEnum = pgEnum("address_type", ["BILLING", "SHIPPING", "BOTH"]);
+import { addressTypeEnum } from "./enums";
 
 export const addresses = pgTable("addresses", {
   id: uuid("id").primaryKey().defaultRandom(),

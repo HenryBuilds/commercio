@@ -4,11 +4,11 @@ import {
   InvoiceItem,
   InvoiceId,
   InvoiceStatus,
-  TaxRateId,
 } from "../modules/invoice/invoice.model";
 import { ProductId } from "../modules/product/product.model";
 import { CustomerId } from "../modules/customer/customer.model";
 import { OrderId } from "../modules/order/order.model";
+import { TaxRateId } from "../modules/tax/tax.model";
 
 /**
  * Service for Invoice business logic

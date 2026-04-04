@@ -4,8 +4,6 @@ import { products } from "./products";
 import { productVariants } from "./product-variants";
 import { customerGroups } from "./customer-groups";
 
-export const pricingStrategyEnum = null;
-
 export const priceLists = mysqlTable("price_lists", {
   id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
   name: text("name").notNull(),

@@ -4,8 +4,6 @@ import { products } from "./products";
 import { productVariants } from "./product-variants";
 import { customerGroups } from "./customer-groups";
 
-export const pricingStrategyEnum = null;
-
 export const priceLists = sqliteTable("price_lists", {
   id: text("id").primaryKey().$defaultFn(() => randomUUID()),
   name: text("name").notNull(),

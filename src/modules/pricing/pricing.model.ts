@@ -96,7 +96,7 @@ export class PriceEntry {
     if (strategy === PricingStrategy.TIERED) {
       // Validate tiers are sorted by minQuantity
       for (let i = 1; i < tierPrices.length; i++) {
-        if (tierPrices[i].minQuantity <= tierPrices[i - 1].minQuantity) {
+        if (tierPrices[i]!.minQuantity <= tierPrices[i - 1]!.minQuantity) {
           throw new Error("Tier prices must have ascending minimum quantities");
         }
       }
@@ -118,7 +118,7 @@ export class PriceEntry {
         applicableTier = tier;
       }
     }
-    return applicableTier.unitPrice;
+    return applicableTier!.unitPrice;
   }
 
   static fromDb(data: {
