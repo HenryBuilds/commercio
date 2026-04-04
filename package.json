@@ -1,6 +1,6 @@
 {
   "name": "commercio",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A modular ERP system for Node.js with support for PostgreSQL, MySQL, and SQLite via Drizzle ORM",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
