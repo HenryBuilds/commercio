@@ -138,6 +138,65 @@ const product = await productService.createProduct(
         </div>
       </section>
 
+      <section className="space-y-4">
+        <h2 className="text-sm font-medium text-muted-foreground tracking-wide uppercase">Business Workflows</h2>
+        <p className="text-sm text-muted-foreground">
+          End-to-end examples showing how multiple services work together for real business processes.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Link href="/workflows/order-to-cash" className="block">
+            <Card className="h-full transition-colors hover:bg-accent/50">
+              <CardContent className="pt-5 pb-5">
+                <p className="font-medium">B2B Order-to-Cash</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Customer onboarding, catalog, pricing, order, fulfillment, invoice, payment
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/workflows/procurement" className="block">
+            <Card className="h-full transition-colors hover:bg-accent/50">
+              <CardContent className="pt-5 pb-5">
+                <p className="font-medium">Supplier Procurement</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Low-stock detection, purchase orders, batch tracking, inventory receipt
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/workflows/returns" className="block">
+            <Card className="h-full transition-colors hover:bg-accent/50">
+              <CardContent className="pt-5 pb-5">
+                <p className="font-medium">Returns &amp; Refund</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  RMA workflow, serial number tracking, refund processing
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/workflows/international-sales" className="block">
+            <Card className="h-full transition-colors hover:bg-accent/50">
+              <CardContent className="pt-5 pb-5">
+                <p className="font-medium">International Sales</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Multi-currency pricing, tax per country, cross-border invoicing
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/workflows/inventory-management" className="block sm:col-span-2">
+            <Card className="h-full transition-colors hover:bg-accent/50">
+              <CardContent className="pt-5 pb-5">
+                <p className="font-medium">Inventory &amp; Replenishment</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Multi-warehouse stock, reorder rules, batch expiry, plugin-driven alerts
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      </section>
+
       <section className="border-t pt-8 pb-4">
         <div className="text-sm text-muted-foreground space-y-1">
           <p>TypeScript &middot; PostgreSQL &middot; Drizzle ORM &middot; Pino Logging</p>

@@ -36,6 +36,12 @@ const navigation = [
   { title: "Batch Tracking", href: "/batch-tracking" },
   { title: "Plugin System", href: "/plugins" },
   { title: "Search", href: "/search" },
+  { separator: true, label: "Workflows" },
+  { title: "Order-to-Cash", href: "/workflows/order-to-cash" },
+  { title: "Procurement", href: "/workflows/procurement" },
+  { title: "Returns & Refund", href: "/workflows/returns" },
+  { title: "International Sales", href: "/workflows/international-sales" },
+  { title: "Inventory Mgmt", href: "/workflows/inventory-management" },
   { separator: true, label: "Reference" },
   { title: "API Reference", href: "/api" },
 ] as const
