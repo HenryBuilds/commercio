@@ -7,6 +7,7 @@ import {
 import { CodeBlock } from "@/components/code-block";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ProcessFlow } from "@/components/process-flow";
 import { Info, AlertCircle } from "lucide-react";
 
 export default function ReturnsPage() {
@@ -25,35 +26,18 @@ export default function ReturnsPage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Process Flow</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
-            {[
-              "Customer Requests Return",
-              "Review & Approve/Reject",
-              "Customer Ships Back",
-              "Receive & Inspect",
-              "Update Serial Numbers",
-              "Process Refund",
-              "Issue Credit Note",
-              "Close RMA",
-            ].map((step, i) => (
-              <span key={step} className="flex items-center gap-2">
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">
-                  {i + 1}
-                </span>
-                <span>{step}</span>
-                {i < 7 && (
-                  <span className="text-muted-foreground">&rarr;</span>
-                )}
-              </span>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <ProcessFlow
+        steps={[
+          "Customer Requests Return",
+          "Review & Approve/Reject",
+          "Customer Ships Back",
+          "Receive & Inspect",
+          "Update Serial Numbers",
+          "Process Refund",
+          "Issue Credit Note",
+          "Close RMA",
+        ]}
+      />
 
       <Card>
         <CardHeader>

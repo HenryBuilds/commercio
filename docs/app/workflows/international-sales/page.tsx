@@ -7,6 +7,7 @@ import {
 import { CodeBlock } from "@/components/code-block";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ProcessFlow } from "@/components/process-flow";
 import { Info } from "lucide-react";
 
 export default function InternationalSalesPage() {
@@ -25,35 +26,18 @@ export default function InternationalSalesPage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Process Flow</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
-            {[
-              "Set Up Currencies",
-              "Localized Pricing",
-              "Tax per Country",
-              "Customer Places Order (USD)",
-              "Convert to Base (EUR)",
-              "Invoice in Customer Currency",
-              "Accept Payment (USD)",
-              "Record in Base Currency",
-            ].map((step, i) => (
-              <span key={step} className="flex items-center gap-2">
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">
-                  {i + 1}
-                </span>
-                <span>{step}</span>
-                {i < 7 && (
-                  <span className="text-muted-foreground">&rarr;</span>
-                )}
-              </span>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <ProcessFlow
+        steps={[
+          "Set Up Currencies",
+          "Localized Pricing",
+          "Tax per Country",
+          "Customer Places Order (USD)",
+          "Convert to Base (EUR)",
+          "Invoice in Customer Currency",
+          "Accept Payment (USD)",
+          "Record in Base Currency",
+        ]}
+      />
 
       <Card>
         <CardHeader>
