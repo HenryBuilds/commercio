@@ -23,6 +23,16 @@ A modular ERP (Enterprise Resource Planning) system for Node.js with PostgreSQL 
 - Shipping with methods, shipments, and tracking
 - Supplier management with purchase orders
 - Promotions and coupon system with percentage/fixed discounts
+- **Audit Log** for tracking all entity changes (who, what, when)
+- **Webhook / Notification system** for real-time event delivery
+- **Multi-Currency** with exchange rates and automatic conversion
+- **Reorder Point / Auto-Replenishment** with low-stock alerts
+- **Cart Rules / Discount Engine** (buy-x-get-y, percentage threshold, free shipping, bundle & quantity discounts)
+- **Reporting / Analytics** (revenue, top products, customer lifetime value, inventory, overdue invoices)
+- **RMA (Return Merchandise Authorization)** with full status workflow
+- **Batch & Serial Number Tracking** for traceability from supplier to customer
+- **Plugin / Hook System** for extensibility without forking
+- **Search / Filter Service** with query, category, stock, price range filters and pagination
 - TypeScript-first with full type safety
 - Structured logging with Pino
 
@@ -900,6 +910,111 @@ const productReservations = await reservationService.getReservationsByProduct(
 - `deactivateCoupon(id: CouponId): Promise<Coupon>`
 - `activateCoupon(id: CouponId): Promise<Coupon>`
 
+### AuditLogService
+
+- `log(entityType: string, entityId: string, action: AuditAction, options?: { actor?, oldValues?, newValues?, metadata? }): Promise<AuditLog>`
+- `getById(id: AuditLogId): Promise<AuditLog>`
+- `getByEntity(entityType: string, entityId: string): Promise<AuditLog[]>`
+- `getByEntityType(entityType: string): Promise<AuditLog[]>`
+- `getByActor(actor: string): Promise<AuditLog[]>`
+- `getByDateRange(from: Date, to: Date): Promise<AuditLog[]>`
+
+### WebhookService
+
+- `registerWebhook(url: string, events: WebhookEventType[], options?: { secret? }): Promise<Webhook>`
+- `getWebhookById(id: WebhookId): Promise<Webhook>`
+- `getAllWebhooks(): Promise<Webhook[]>`
+- `updateWebhook(id: WebhookId, updates: Partial<{ url, events, secret, isActive }>): Promise<Webhook>`
+- `deleteWebhook(id: WebhookId): Promise<void>`
+- `emit(eventType: WebhookEventType, payload: Record<string, unknown>): Promise<WebhookEvent[]>`
+- `markEventDelivered(eventId: string, responseStatus: number): Promise<WebhookEvent>`
+- `getPendingEvents(): Promise<WebhookEvent[]>`
+- `getEventsByWebhook(webhookId: WebhookId): Promise<WebhookEvent[]>`
+
+### CurrencyService
+
+- `createExchangeRate(sourceCurrency: string, targetCurrency: string, rate: number, effectiveFrom: Date, effectiveTo?: Date): Promise<ExchangeRate>`
+- `getExchangeRateById(id: ExchangeRateId): Promise<ExchangeRate>`
+- `getEffectiveRate(sourceCurrency: string, targetCurrency: string, date?: Date): Promise<ExchangeRate>`
+- `convert(amount: number, sourceCurrency: string, targetCurrency: string, date?: Date): Promise<{ amount, rate, sourceCurrency, targetCurrency }>`
+- `getAllRates(): Promise<ExchangeRate[]>`
+- `getRatesByCurrencyPair(source: string, target: string): Promise<ExchangeRate[]>`
+
+### ReorderService
+
+- `createRule(productId: string, warehouseId: string, reorderPoint: number, reorderQuantity: number, options?: { preferredSupplierId? }): Promise<ReorderRule>`
+- `getRuleById(id: ReorderRuleId): Promise<ReorderRule>`
+- `getRulesByProduct(productId: string): Promise<ReorderRule[]>`
+- `getRulesByWarehouse(warehouseId: string): Promise<ReorderRule[]>`
+- `updateRule(id: ReorderRuleId, updates: Partial<{ reorderPoint, reorderQuantity, preferredSupplierId, isActive }>): Promise<ReorderRule>`
+- `deleteRule(id: ReorderRuleId): Promise<void>`
+- `checkReorderAlerts(): Promise<ReorderAlert[]>` - Returns products below reorder point
+
+### CartRulesService
+
+- `createRule(name: string, type: CartRuleType, conditions: CartRuleCondition, effects: CartRuleEffect, validFrom: Date, validTo: Date, options?: { priority?, stackable? }): Promise<CartRule>`
+- `getRuleById(id: CartRuleId): Promise<CartRule>`
+- `getAllRules(): Promise<CartRule[]>`
+- `getValidRules(): Promise<CartRule[]>`
+- `updateRule(id: CartRuleId, updates: Partial<{...}>): Promise<CartRule>`
+- `deactivateRule(id: CartRuleId): Promise<CartRule>`
+- `evaluateCart(items: CartItem[], customerGroupId?: string): Promise<CartRuleResult[]>` - Evaluates all matching rules against cart
+
+### ReportingService
+
+- `getRevenueReport(customerId?: string): Promise<RevenueReport>` - Total revenue, order count, average order value
+- `getTopProducts(limit?: number): Promise<TopProduct[]>` - Top products by revenue
+- `getCustomerLifetimeValues(limit?: number): Promise<CustomerLifetimeValue[]>` - CLV ranking
+- `getInventoryReport(): Promise<InventoryReport[]>` - Stock levels per product/warehouse
+- `getOverdueInvoices(): Promise<OverdueInvoiceReport[]>` - Overdue invoices with days overdue
+
+### RmaService
+
+- `createRma(orderId: string, customerId: string, items: { productId, quantity, reason, notes? }[], options?: { notes? }): Promise<Rma>`
+- `getRmaById(id: RmaId): Promise<Rma>`
+- `getRmasByOrder(orderId: string): Promise<Rma[]>`
+- `getRmasByCustomer(customerId: string): Promise<Rma[]>`
+- `approveRma(id: RmaId): Promise<Rma>` (REQUESTED -> APPROVED)
+- `rejectRma(id: RmaId, reason?: string): Promise<Rma>` (REQUESTED -> REJECTED)
+- `receiveRma(id: RmaId, warehouseId: string): Promise<Rma>` (APPROVED -> RECEIVED, creates return inventory transactions)
+- `refundRma(id: RmaId, refundAmount: number): Promise<Rma>` (RECEIVED -> REFUNDED)
+- `closeRma(id: RmaId): Promise<Rma>` (REFUNDED/REJECTED -> CLOSED)
+
+### BatchTrackingService
+
+- `createBatch(productId: string, batchNumber: string, warehouseId: string, quantity: number, options?: { manufacturingDate?, expiryDate?, supplierId? }): Promise<Batch>`
+- `getBatchById(id: BatchId): Promise<Batch>`
+- `getBatchByNumber(batchNumber: string): Promise<Batch>`
+- `getBatchesByProduct(productId: string): Promise<Batch[]>`
+- `getExpiredBatches(): Promise<Batch[]>`
+- `updateBatchQuantity(id: BatchId, quantity: number): Promise<Batch>`
+- `registerSerialNumber(productId: string, serialNumber: string, warehouseId: string, options?: { batchId? }): Promise<SerialNumber>`
+- `getSerialNumberById(id: SerialNumberId): Promise<SerialNumber>`
+- `lookupSerialNumber(serialNumber: string): Promise<SerialNumber>`
+- `getSerialNumbersByProduct(productId: string): Promise<SerialNumber[]>`
+- `getSerialNumbersByBatch(batchId: string): Promise<SerialNumber[]>`
+- `getAvailableSerialNumbers(productId: string, warehouseId: string): Promise<SerialNumber[]>`
+- `assignToOrder(serialNumberId: SerialNumberId, orderId: string): Promise<SerialNumber>`
+- `markDefective(serialNumberId: SerialNumberId): Promise<SerialNumber>`
+- `markReturned(serialNumberId: SerialNumberId): Promise<SerialNumber>`
+
+### PluginService
+
+- `register(plugin: PluginRegistration): void` - Register a plugin with hooks
+- `unregister(pluginName: string): void` - Remove a plugin
+- `getRegisteredPlugins(): PluginRegistration[]`
+- `isRegistered(pluginName: string): boolean`
+- `executeHook<T>(hookName: PluginHookName, context: HookContext<T>): Promise<HookContext<T>>` - Execute all handlers for a hook
+- `getHookHandlerCount(hookName: PluginHookName): number`
+
+Available hooks: `beforeOrderCreate`, `afterOrderCreate`, `beforeOrderConfirm`, `afterOrderConfirm`, `beforeOrderCancel`, `afterOrderCancel`, `beforePaymentCreate`, `afterPaymentCreate`, `beforeProductCreate`, `afterProductCreate`, `beforeCustomerCreate`, `afterCustomerCreate`, `beforeInvoiceCreate`, `afterInvoiceCreate`, `beforeStockChange`, `afterStockChange`
+
+### SearchService
+
+- `searchProducts(filters: SearchFilters): Promise<SearchResult>` - Search products with filters and pagination
+
+SearchFilters: `query?`, `categoryId?`, `minPrice?`, `maxPrice?`, `inStock?`, `warehouseId?`, `sortBy?` ("name" | "price"), `sortOrder?` ("asc" | "desc"), `page?`, `pageSize?`
+
 ## Database Schema
 
 The package uses the following tables:
@@ -931,6 +1046,16 @@ The package uses the following tables:
 - `purchase_order_items` - Purchase order line items
 - `promotions` - Discount promotions with validity periods
 - `coupons` - Coupon codes linked to promotions
+- `audit_logs` - Audit trail for entity changes
+- `webhooks` - Webhook registrations
+- `webhook_events` - Webhook delivery tracking
+- `exchange_rates` - Currency exchange rates
+- `reorder_rules` - Auto-replenishment rules per product/warehouse
+- `cart_rules` - Cart discount rules (conditions + effects)
+- `rmas` - Return merchandise authorizations
+- `rma_items` - RMA line items with return reason
+- `batches` - Batch tracking with expiry dates
+- `serial_numbers` - Individual serial number tracking
 
 ## Logging
 
