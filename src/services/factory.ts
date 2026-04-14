@@ -23,6 +23,16 @@ import { ShippingService } from "./shipping.service";
 import { SupplierService } from "./supplier.service";
 import { AddressService } from "./address.service";
 import { PromotionService } from "./promotion.service";
+import { AuditLogService } from "./audit-log.service";
+import { WebhookService } from "./webhook.service";
+import { CurrencyService } from "./currency.service";
+import { ReorderService } from "./reorder.service";
+import { CartRulesService } from "./cart-rules.service";
+import { ReportingService } from "./reporting.service";
+import { RmaService } from "./rma.service";
+import { BatchTrackingService } from "./batch-tracking.service";
+import { PluginService } from "./plugin.service";
+import { SearchService } from "./search.service";
 
 import { CategoryRepository } from "../repositories/category.repository";
 import { ProductRepository } from "../repositories/product.repository";
@@ -48,6 +58,15 @@ import { PurchaseOrderRepository } from "../repositories/purchase-order.reposito
 import { AddressRepository } from "../repositories/address.repository";
 import { PromotionRepository } from "../repositories/promotion.repository";
 import { CouponRepository } from "../repositories/coupon.repository";
+import { AuditLogRepository } from "../repositories/audit-log.repository";
+import { WebhookRepository } from "../repositories/webhook.repository";
+import { WebhookEventRepository } from "../repositories/webhook-event.repository";
+import { ExchangeRateRepository } from "../repositories/exchange-rate.repository";
+import { ReorderRuleRepository } from "../repositories/reorder-rule.repository";
+import { CartRuleRepository } from "../repositories/cart-rule.repository";
+import { RmaRepository } from "../repositories/rma.repository";
+import { BatchRepository } from "../repositories/batch.repository";
+import { SerialNumberRepository } from "../repositories/serial-number.repository";
 
 /**
  * Creates a CategoryService with default repository.
@@ -300,6 +319,135 @@ export function createPromotionService(options?: {
 }
 
 /**
+ * Creates an AuditLogService with default repository.
+ */
+export function createAuditLogService(options?: {
+  auditLogRepository?: AuditLogRepository;
+}): AuditLogService {
+  return new AuditLogService(
+    options?.auditLogRepository || new AuditLogRepository()
+  );
+}
+
+/**
+ * Creates a WebhookService with default repositories.
+ */
+export function createWebhookService(options?: {
+  webhookRepository?: WebhookRepository;
+  webhookEventRepository?: WebhookEventRepository;
+}): WebhookService {
+  return new WebhookService(
+    options?.webhookRepository || new WebhookRepository(),
+    options?.webhookEventRepository || new WebhookEventRepository()
+  );
+}
+
+/**
+ * Creates a CurrencyService with default repository.
+ */
+export function createCurrencyService(options?: {
+  exchangeRateRepository?: ExchangeRateRepository;
+}): CurrencyService {
+  return new CurrencyService(
+    options?.exchangeRateRepository || new ExchangeRateRepository()
+  );
+}
+
+/**
+ * Creates a ReorderService with default repositories.
+ */
+export function createReorderService(options?: {
+  reorderRuleRepository?: ReorderRuleRepository;
+  stockRepository?: StockRepository;
+}): ReorderService {
+  return new ReorderService(
+    options?.reorderRuleRepository || new ReorderRuleRepository(),
+    options?.stockRepository || new StockRepository()
+  );
+}
+
+/**
+ * Creates a CartRulesService with default repository.
+ */
+export function createCartRulesService(options?: {
+  cartRuleRepository?: CartRuleRepository;
+}): CartRulesService {
+  return new CartRulesService(
+    options?.cartRuleRepository || new CartRuleRepository()
+  );
+}
+
+/**
+ * Creates a ReportingService with default repositories.
+ */
+export function createReportingService(options?: {
+  orderRepository?: OrderRepository;
+  productRepository?: ProductRepository;
+  customerRepository?: CustomerRepository;
+  invoiceRepository?: InvoiceRepository;
+  stockRepository?: StockRepository;
+}): ReportingService {
+  return new ReportingService(
+    options?.orderRepository || new OrderRepository(),
+    options?.productRepository || new ProductRepository(),
+    options?.customerRepository || new CustomerRepository(),
+    options?.invoiceRepository || new InvoiceRepository(),
+    options?.stockRepository || new StockRepository()
+  );
+}
+
+/**
+ * Creates an RmaService with default repositories.
+ */
+export function createRmaService(options?: {
+  rmaRepository?: RmaRepository;
+  orderRepository?: OrderRepository;
+  inventoryTransactionService?: InventoryTransactionService;
+}): RmaService {
+  const its = options?.inventoryTransactionService || createInventoryTransactionService();
+  return new RmaService(
+    options?.rmaRepository || new RmaRepository(),
+    options?.orderRepository || new OrderRepository(),
+    its
+  );
+}
+
+/**
+ * Creates a BatchTrackingService with default repositories.
+ */
+export function createBatchTrackingService(options?: {
+  batchRepository?: BatchRepository;
+  serialNumberRepository?: SerialNumberRepository;
+}): BatchTrackingService {
+  return new BatchTrackingService(
+    options?.batchRepository || new BatchRepository(),
+    options?.serialNumberRepository || new SerialNumberRepository()
+  );
+}
+
+/**
+ * Creates a PluginService (in-memory, no repository needed).
+ */
+export function createPluginService(): PluginService {
+  return new PluginService();
+}
+
+/**
+ * Creates a SearchService with default repositories.
+ */
+export function createSearchService(options?: {
+  productRepository?: ProductRepository;
+  stockRepository?: StockRepository;
+  priceEntryRepository?: PriceEntryRepository;
+}): SearchService {
+  return new SearchService(
+    options?.productRepository || new ProductRepository(),
+    options?.stockRepository || new StockRepository(),
+    options?.priceEntryRepository || new PriceEntryRepository()
+  );
+}
+
+/**
  * Creates all services at once with default repositories.
  * This is convenient for most use cases.
  *
@@ -330,6 +478,15 @@ export function createServices(options?: {
   addressRepository?: AddressRepository;
   promotionRepository?: PromotionRepository;
   couponRepository?: CouponRepository;
+  auditLogRepository?: AuditLogRepository;
+  webhookRepository?: WebhookRepository;
+  webhookEventRepository?: WebhookEventRepository;
+  exchangeRateRepository?: ExchangeRateRepository;
+  reorderRuleRepository?: ReorderRuleRepository;
+  cartRuleRepository?: CartRuleRepository;
+  rmaRepository?: RmaRepository;
+  batchRepository?: BatchRepository;
+  serialNumberRepository?: SerialNumberRepository;
 }) {
   // Note: orderRepository is shared between OrderService and CustomerService
   // Create repositories (shared instances)
@@ -415,6 +572,27 @@ export function createServices(options?: {
   const addressService = new AddressService(addressRepo);
   const promotionService = new PromotionService(promotionRepo, couponRepo);
 
+  const auditLogRepo = options?.auditLogRepository || new AuditLogRepository();
+  const webhookRepo = options?.webhookRepository || new WebhookRepository();
+  const webhookEventRepo = options?.webhookEventRepository || new WebhookEventRepository();
+  const exchangeRateRepo = options?.exchangeRateRepository || new ExchangeRateRepository();
+  const reorderRuleRepo = options?.reorderRuleRepository || new ReorderRuleRepository();
+  const cartRuleRepo = options?.cartRuleRepository || new CartRuleRepository();
+  const rmaRepo = options?.rmaRepository || new RmaRepository();
+  const batchRepo = options?.batchRepository || new BatchRepository();
+  const serialNumberRepo = options?.serialNumberRepository || new SerialNumberRepository();
+
+  const auditLogService = new AuditLogService(auditLogRepo);
+  const webhookService = new WebhookService(webhookRepo, webhookEventRepo);
+  const currencyService = new CurrencyService(exchangeRateRepo);
+  const reorderService = new ReorderService(reorderRuleRepo, stockRepo);
+  const cartRulesService = new CartRulesService(cartRuleRepo);
+  const reportingService = new ReportingService(orderRepo, productRepo, customerRepo, invoiceRepo, stockRepo);
+  const rmaService = new RmaService(rmaRepo, orderRepo, inventoryTransactionService);
+  const batchTrackingService = new BatchTrackingService(batchRepo, serialNumberRepo);
+  const pluginService = new PluginService();
+  const searchService = new SearchService(productRepo, stockRepo, priceEntryRepo);
+
   return {
     categoryService,
     productService,
@@ -434,5 +612,15 @@ export function createServices(options?: {
     supplierService,
     addressService,
     promotionService,
+    auditLogService,
+    webhookService,
+    currencyService,
+    reorderService,
+    cartRulesService,
+    reportingService,
+    rmaService,
+    batchTrackingService,
+    pluginService,
+    searchService,
   };
 }

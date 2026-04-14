@@ -40,6 +40,14 @@ export * from "./modules/shipping/shipping.model";
 export * from "./modules/supplier/supplier.model";
 export * from "./modules/address/address.model";
 export * from "./modules/promotion/promotion.model";
+export * from "./modules/audit-log/audit-log.model";
+export * from "./modules/webhook/webhook.model";
+export * from "./modules/currency/currency.model";
+export * from "./modules/reorder/reorder.model";
+export * from "./modules/cart-rules/cart-rules.model";
+export * from "./modules/rma/rma.model";
+export * from "./modules/batch-tracking/batch-tracking.model";
+export * from "./modules/plugin/plugin.model";
 
 // Repositories
 export { CategoryRepository } from "./repositories/category.repository";
@@ -66,6 +74,15 @@ export { PurchaseOrderRepository } from "./repositories/purchase-order.repositor
 export { AddressRepository } from "./repositories/address.repository";
 export { PromotionRepository } from "./repositories/promotion.repository";
 export { CouponRepository } from "./repositories/coupon.repository";
+export { AuditLogRepository } from "./repositories/audit-log.repository";
+export { WebhookRepository } from "./repositories/webhook.repository";
+export { WebhookEventRepository } from "./repositories/webhook-event.repository";
+export { ExchangeRateRepository } from "./repositories/exchange-rate.repository";
+export { ReorderRuleRepository } from "./repositories/reorder-rule.repository";
+export { CartRuleRepository } from "./repositories/cart-rule.repository";
+export { RmaRepository } from "./repositories/rma.repository";
+export { BatchRepository } from "./repositories/batch.repository";
+export { SerialNumberRepository } from "./repositories/serial-number.repository";
 
 // Services (business logic layer)
 export * from "./services/index";

@@ -17,6 +17,20 @@ export { ShippingService } from "./shipping.service";
 export { SupplierService } from "./supplier.service";
 export { AddressService } from "./address.service";
 export { PromotionService } from "./promotion.service";
+export { AuditLogService } from "./audit-log.service";
+export { WebhookService } from "./webhook.service";
+export { CurrencyService } from "./currency.service";
+export { ReorderService } from "./reorder.service";
+export type { ReorderAlert } from "./reorder.service";
+export { CartRulesService } from "./cart-rules.service";
+export { ReportingService } from "./reporting.service";
+export type { RevenueReport, TopProduct, CustomerLifetimeValue, InventoryReport, OverdueInvoiceReport, OrderStatusBreakdown, LowStockReport } from "./reporting.service";
+export { RmaService } from "./rma.service";
+export { BatchTrackingService } from "./batch-tracking.service";
+export { PluginService } from "./plugin.service";
+export type { PluginState } from "./plugin.service";
+export { SearchService } from "./search.service";
+export type { SearchFilters, SearchResult, ProductWithPrice } from "./search.service";
 
 // Export factory functions for easy service creation
 export * from "./factory";
