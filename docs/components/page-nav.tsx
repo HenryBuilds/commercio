@@ -2,43 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-
-const pages = [
-  { href: "/", title: "Home" },
-  { href: "/installation", title: "Installation" },
-  { href: "/quick-start", title: "Quick Start" },
-  { href: "/categories", title: "Categories" },
-  { href: "/products", title: "Products" },
-  { href: "/product-variants", title: "Product Variants" },
-  { href: "/customers", title: "Customers" },
-  { href: "/addresses", title: "Addresses" },
-  { href: "/warehouses", title: "Warehouses" },
-  { href: "/inventory", title: "Inventory" },
-  { href: "/orders", title: "Orders" },
-  { href: "/invoices", title: "Invoices" },
-  { href: "/payments", title: "Payments" },
-  { href: "/shipping", title: "Shipping" },
-  { href: "/pricing", title: "Pricing" },
-  { href: "/tax", title: "Tax" },
-  { href: "/suppliers", title: "Suppliers" },
-  { href: "/promotions", title: "Promotions" },
-  { href: "/audit-log", title: "Audit Log" },
-  { href: "/webhooks", title: "Webhooks" },
-  { href: "/currency", title: "Multi-Currency" },
-  { href: "/reorder", title: "Reorder Rules" },
-  { href: "/cart-rules", title: "Cart Rules" },
-  { href: "/reporting", title: "Reporting" },
-  { href: "/rma", title: "RMA / Returns" },
-  { href: "/batch-tracking", title: "Batch Tracking" },
-  { href: "/plugins", title: "Plugin System" },
-  { href: "/search", title: "Search" },
-  { href: "/workflows/order-to-cash", title: "Workflow: Order-to-Cash" },
-  { href: "/workflows/procurement", title: "Workflow: Procurement" },
-  { href: "/workflows/returns", title: "Workflow: Returns" },
-  { href: "/workflows/international-sales", title: "Workflow: International Sales" },
-  { href: "/workflows/inventory-management", title: "Workflow: Inventory" },
-  { href: "/api", title: "API Reference" },
-]
+import { pages } from "@/lib/navigation"
 
 export function PageNav() {
   const pathname = usePathname()
