@@ -67,8 +67,8 @@ export function CodeBlockHighlight({ code, language = "typescript", className }:
             <Copy className="h-3.5 w-3.5" />
           </Button>
         </div>
-        <pre className="rounded-lg bg-muted p-4 text-sm whitespace-pre-wrap break-words word-break-break-word">
-          <code className="font-mono whitespace-pre-wrap break-words word-break-break-word">{code}</code>
+        <pre className="rounded-lg bg-muted p-4 text-sm overflow-x-auto">
+          <code className="font-mono">{code}</code>
         </pre>
       </div>
     )
@@ -91,7 +91,7 @@ export function CodeBlockHighlight({ code, language = "typescript", className }:
         </Button>
       </div>
       <div
-        className="rounded-lg border bg-card [&_pre]:!m-0 [&_pre]:!p-4 [&_pre]:!bg-transparent [&_pre]:!text-sm [&_pre]:font-mono [&_code]:!text-sm [&_pre]:!overflow-visible [&_pre]:!whitespace-pre-wrap [&_pre]:!break-words [&_code]:!whitespace-pre-wrap [&_code]:!break-words [&_code]:!word-break-break-word"
+        className="rounded-lg border bg-card [&_pre]:!m-0 [&_pre]:!p-4 [&_pre]:!bg-transparent [&_pre]:!text-sm [&_pre]:font-mono [&_code]:!text-sm [&_pre]:!overflow-x-auto [&_pre]:!whitespace-pre [&_code]:!whitespace-pre"
         dangerouslySetInnerHTML={{ __html: highlightedCode }}
       />
     </div>
