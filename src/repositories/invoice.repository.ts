@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and, lt } from "drizzle-orm";
 import { db } from "../db/db";
 import { invoices, invoiceItems } from "../db/schema/index";
 import {
@@ -169,6 +169,29 @@ export class InvoiceRepository {
       .where(eq(invoiceItems.invoiceId, id));
 
     return this.toDomain(updated, items);
+  }
+
+  async findOverdue(): Promise<Invoice[]> {
+    const now = new Date();
+    const invoiceResults = await db
+      .select()
+      .from(invoices)
+      .where(and(
+        eq(invoices.status, "SENT"),
+        lt(invoices.dueDate, now)
+      ));
+
+    const invoicesWithItems = await Promise.all(
+      invoiceResults.map(async (invoice: any) => {
+        const items = await db
+          .select()
+          .from(invoiceItems)
+          .where(eq(invoiceItems.invoiceId, invoice.id));
+        return this.toDomain(invoice, items);
+      })
+    );
+
+    return invoicesWithItems;
   }
 
   private toDomain(
