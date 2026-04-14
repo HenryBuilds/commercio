@@ -28,7 +28,7 @@ export class TestDbHelper {
         
         // Use a single TRUNCATE with all tables
         await db.execute(
-          sql`TRUNCATE TABLE coupons, promotions, addresses, purchase_order_items, purchase_orders, suppliers, shipments, shipping_methods, payments, invoice_items, invoices, price_entries, price_lists, tax_rates, tax_groups, order_items, orders, reservations, inventory_transactions, stock, product_variants, products, categories, warehouses, variant_attributes, customers, customer_groups RESTART IDENTITY CASCADE`
+          sql`TRUNCATE TABLE serial_numbers, batches, rma_items, rmas, cart_rules, reorder_rules, exchange_rates, webhook_events, webhooks, audit_logs, coupons, promotions, addresses, purchase_order_items, purchase_orders, suppliers, shipments, shipping_methods, payments, invoice_items, invoices, price_entries, price_lists, tax_rates, tax_groups, order_items, orders, reservations, inventory_transactions, stock, product_variants, products, categories, warehouses, variant_attributes, customers, customer_groups RESTART IDENTITY CASCADE`
         );
         
         // Re-enable foreign key checks
