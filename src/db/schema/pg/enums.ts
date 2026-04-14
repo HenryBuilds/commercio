@@ -88,3 +88,50 @@ export const discountTypeEnum = pgEnum("discount_type", [
   "PERCENTAGE",
   "FIXED_AMOUNT",
 ]);
+
+export const auditActionEnum = pgEnum("audit_action", [
+  "CREATE",
+  "UPDATE",
+  "DELETE",
+  "STATUS_CHANGE",
+]);
+
+export const webhookDeliveryStatusEnum = pgEnum("webhook_delivery_status", [
+  "PENDING",
+  "SUCCESS",
+  "FAILED",
+]);
+
+export const cartRuleTypeEnum = pgEnum("cart_rule_type", [
+  "BUY_X_GET_Y",
+  "PERCENTAGE_THRESHOLD",
+  "FREE_SHIPPING",
+  "BUNDLE_DISCOUNT",
+  "QUANTITY_DISCOUNT",
+]);
+
+export const rmaStatusEnum = pgEnum("rma_status", [
+  "REQUESTED",
+  "APPROVED",
+  "REJECTED",
+  "RECEIVED",
+  "REFUNDED",
+  "CLOSED",
+]);
+
+export const rmaReasonEnum = pgEnum("rma_reason", [
+  "DEFECTIVE",
+  "WRONG_ITEM",
+  "NOT_AS_DESCRIBED",
+  "CHANGED_MIND",
+  "DAMAGED_IN_SHIPPING",
+  "OTHER",
+]);
+
+export const serialNumberStatusEnum = pgEnum("serial_number_status", [
+  "AVAILABLE",
+  "RESERVED",
+  "SOLD",
+  "RETURNED",
+  "DEFECTIVE",
+]);

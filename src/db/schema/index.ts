@@ -32,6 +32,16 @@ export let purchaseOrderItems = pgSchema.purchaseOrderItems;
 export let addresses = pgSchema.addresses;
 export let promotions = pgSchema.promotions;
 export let coupons = pgSchema.coupons;
+export let auditLogs = pgSchema.auditLogs;
+export let webhooks = pgSchema.webhooks;
+export let webhookEvents = pgSchema.webhookEvents;
+export let exchangeRates = pgSchema.exchangeRates;
+export let reorderRules = pgSchema.reorderRules;
+export let cartRules = pgSchema.cartRules;
+export let rmas = pgSchema.rmas;
+export let rmaItems = pgSchema.rmaItems;
+export let batches = pgSchema.batches;
+export let serialNumbers = pgSchema.serialNumbers;
 
 export let inventoryTransactionTypeEnum = pgSchema.inventoryTransactionTypeEnum;
 export let reservationStatusEnum = pgSchema.reservationStatusEnum;
@@ -45,6 +55,12 @@ export let shipmentStatusEnum = pgSchema.shipmentStatusEnum;
 export let purchaseOrderStatusEnum = pgSchema.purchaseOrderStatusEnum;
 export let addressTypeEnum = pgSchema.addressTypeEnum;
 export let discountTypeEnum = pgSchema.discountTypeEnum;
+export let auditActionEnum = pgSchema.auditActionEnum;
+export let webhookDeliveryStatusEnum = pgSchema.webhookDeliveryStatusEnum;
+export let cartRuleTypeEnum = pgSchema.cartRuleTypeEnum;
+export let rmaStatusEnum = pgSchema.rmaStatusEnum;
+export let rmaReasonEnum = pgSchema.rmaReasonEnum;
+export let serialNumberStatusEnum = pgSchema.serialNumberStatusEnum;
 
 /**
  * Swaps all schema exports to the given dialect.
@@ -93,6 +109,16 @@ export function setSchemaDialect(dialect: Dialect): void {
   addresses = schema.addresses;
   promotions = schema.promotions;
   coupons = schema.coupons;
+  auditLogs = schema.auditLogs;
+  webhooks = schema.webhooks;
+  webhookEvents = schema.webhookEvents;
+  exchangeRates = schema.exchangeRates;
+  reorderRules = schema.reorderRules;
+  cartRules = schema.cartRules;
+  rmas = schema.rmas;
+  rmaItems = schema.rmaItems;
+  batches = schema.batches;
+  serialNumbers = schema.serialNumbers;
   inventoryTransactionTypeEnum = schema.inventoryTransactionTypeEnum;
   reservationStatusEnum = schema.reservationStatusEnum;
   orderStatusEnum = schema.orderStatusEnum;
@@ -105,4 +131,10 @@ export function setSchemaDialect(dialect: Dialect): void {
   purchaseOrderStatusEnum = schema.purchaseOrderStatusEnum;
   addressTypeEnum = schema.addressTypeEnum;
   discountTypeEnum = schema.discountTypeEnum;
+  auditActionEnum = schema.auditActionEnum;
+  webhookDeliveryStatusEnum = schema.webhookDeliveryStatusEnum;
+  cartRuleTypeEnum = schema.cartRuleTypeEnum;
+  rmaStatusEnum = schema.rmaStatusEnum;
+  rmaReasonEnum = schema.rmaReasonEnum;
+  serialNumberStatusEnum = schema.serialNumberStatusEnum;
 }
